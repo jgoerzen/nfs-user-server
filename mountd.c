@@ -70,7 +70,7 @@ static int	mountd_versions[] = {
 	0
 };
 
-char		argbuf[MNTPATHLEN + 1];
+char		argbuf[PATH_MAX + 1];
 char		*auth_file = NULL;
 static char	*program_name;
 int		need_reinit = 0;
@@ -90,6 +90,9 @@ mountproc_null_1_svc(void *argp, struct svc_req *rqstp)
 /*
  * MOUNT
  * This is what the whole protocol is all about
+ *
+ * Note: librpc gets us MNTPATHLEN length strings, but realpath
+ * needs a PATH_MAX length output buffer.
  */
 fhstatus *
 mountproc_mnt_1_svc(dirpath *argp, struct svc_req *rqstp)
@@ -98,7 +101,7 @@ mountproc_mnt_1_svc(dirpath *argp, struct svc_req *rqstp)
 	struct stat	stbuf;
 	nfs_client	*cp;
 	nfs_mount	*mp;
-	char		nargbuf[MNTPATHLEN + 1];
+	char		nargbuf[PATH_MAX + 1];
 	int		saved_errno = 0;
 #ifdef WANT_LOG_MOUNTS
 	struct in_addr	addr;
@@ -310,6 +313,7 @@ main(int argc, char **argv)
 	int c;
 
 	program_name = argv[0];
+	chdir("/");
 
 	/* Parse the command line options and arguments. */
 	opterr = 0;

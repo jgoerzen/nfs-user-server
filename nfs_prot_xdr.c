@@ -98,7 +98,7 @@ bool_t
 xdr_fattr(XDR *xdrs, fattr *objp)
 {
 
-	 register long *buf=buf;
+	 int32_t *buf=buf;
 
 
 	 if (xdrs->x_op == XDR_ENCODE) {
@@ -273,7 +273,7 @@ bool_t
 xdr_sattr(XDR *xdrs, sattr *objp)
 {
 
-	 register long *buf=buf;
+	 int32_t *buf=buf;
 
 
 	 if (xdrs->x_op == XDR_ENCODE) {
@@ -553,7 +553,7 @@ bool_t
 xdr_writeargs(XDR *xdrs, writeargs *objp)
 {
 
-	register long  *buf = buf;
+	int32_t *buf = buf;
 
 
 	if (xdrs->x_op == XDR_ENCODE) {
@@ -777,7 +777,7 @@ bool_t
 xdr_statfsokres(XDR *xdrs, statfsokres *objp)
 {
 
-	 register long *buf=buf;
+	 int32_t *buf=buf;
 
 
 	 if (xdrs->x_op == XDR_ENCODE) {

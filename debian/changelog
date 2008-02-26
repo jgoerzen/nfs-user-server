@@ -1,0 +1,266 @@
+nfs-user-server (2.2beta47-25) unstable; urgency=low
+
+  * Also adding LSB headers in ugidd init script.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 26 Feb 2008 21:37:00 +0100
+
+nfs-user-server (2.2beta47-24) unstable; urgency=low
+
+  * Added patch from Petter Reinholdtsen <pere@hungry.com> to add LSB header
+    to init script (Closes: #458390).
+
+ -- Daniel Baumann <daniel@debian.org>  Sat,  2 Feb 2008 10:23:00 +0100
+
+nfs-user-server (2.2beta47-23) unstable; urgency=medium
+
+  * New email address.
+  * Bumped policy version.
+  * Abusing urgency to get the package in etch with the new email.
+  * The new upstream release with additional patches follows after the etch
+    general freeze to avoid regressions in the stable release.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon,  9 Oct 2006 14:30:00 +0200
+
+nfs-user-server (2.2beta47-22) unstable; urgency=high
+
+  * mountd.c: added patch from suse to fix realpath()-related buffer overflow
+    in rpc.mountd [CVE-2006-0043] (Closes: #350020).
+
+ -- Daniel Baumann <daniel.baumann@panthera-systems.net>  Sat, 28 Jan 2006 13:22:00 +0100
+
+nfs-user-server (2.2beta47-21) unstable; urgency=low
+
+  * setattr.c: added patch to support lutimes and lchmod when changing
+    attributes of a symlink from freebsd nfs-client (Closes: #322414).
+
+ -- Daniel Baumann <daniel.baumann@panthera-systems.net>  Wed, 10 Aug 2005 15:35:00 +0200
+
+nfs-user-server (2.2beta47-20) unstable; urgency=low
+
+  * auth.c: added patch for network address/mask authentification (Closes: #250024, #247663).
+  * debian/control: changed build dependency from 'libwrap0-dev | libwrap-dev' to 'libwrap-dev | libwrap0-dev'.
+
+ -- Daniel Baumann <daniel.baumann@panthera-systems.net>  Sun, 31 Aug 2004 12:47:00 +0200
+
+nfs-user-server (2.2beta47-19) unstable; urgency=low
+
+  * New maintainer (Closes: #249715).
+  * debian/control: deleted final point in descriptions.
+  * debian/control: changed build dependency from 'libwrap-dev' to 'libwrap0-dev | libwrap-dev'.
+  * debian/rules: fixed clean calls for proper cleanup.
+  * debian/rules: replaced dh_installmanpages with dh_installman.
+
+ -- Daniel Baumann <daniel.baumann@panthera-systems.net>  Mon, 16 Aug 2004 21:19:00 +0200
+
+nfs-user-server (2.2beta47-18) unstable; urgency=low
+
+  * QA Upload.  
+  * Set maintainer to Debian QA Group <packages@qa.debian.org>.
+
+ -- Thomas Bushnell, BSG <tb@debian.org>  Sat,  7 Aug 2004 17:27:02 -0700
+
+nfs-user-server (2.2beta47-17) unstable; urgency=low
+
+  * Removed netkit-rpc/libc build-dependency.
+  * Removed netbase dependency.
+  * Removed netstd reference in control.
+  * Removed build-stamp/install-stamp.
+
+ -- Herbert Xu <herbert@debian.org>  Sat,  1 Nov 2003 08:17:48 +1100
+
+nfs-user-server (2.2beta47-16) unstable; urgency=low
+
+  * Fixed incorrect exports(5) note about read-only default (closes: #207827).
+
+ -- Herbert Xu <herbert@debian.org>  Sun, 31 Aug 2003 11:10:56 +1000
+
+nfs-user-server (2.2beta47-15) unstable; urgency=low
+
+  * Removed squashing for operations needed for mounting (closes: #192003).
+
+ -- Herbert Xu <herbert@debian.org>  Sun,  8 Jun 2003 17:24:46 +1000
+
+nfs-user-server (2.2beta47-14) unstable; urgency=low
+
+  * Mention the lack of file locking in description.
+  * Added -P option to ugidd (closes: #151473).
+  * Added SIGTERM handler to ugidd.
+
+ -- Herbert Xu <herbert@debian.org>  Wed, 23 Oct 2002 20:08:56 +1000
+
+nfs-user-server (2.2beta47-13) unstable; urgency=low
+
+  * Bind to a random port if a given one is taken (closes: 160675).
+
+ -- Herbert Xu <herbert@debian.org>  Sat,  5 Oct 2002 16:11:33 +1000
+
+nfs-user-server (2.2beta47-12) unstable; urgency=low
+
+  * Added dependencies for libc6.1 and libc0.2 (closes: #123937).
+
+ -- Herbert Xu <herbert@debian.org>  Fri, 14 Dec 2001 19:46:03 +1100
+
+nfs-user-server (2.2beta47-11) unstable; urgency=low
+
+  * Updated build-time dependency (closes: #123753).
+
+ -- Herbert Xu <herbert@debian.org>  Thu, 13 Dec 2001 18:52:57 +1100
+
+nfs-user-server (2.2beta47-10) unstable; urgency=low
+
+  * Added missing apostrophe in init.d script (closes: #81066).
+
+ -- Herbert Xu <herbert@debian.org>  Sat, 14 Apr 2001 13:10:04 +1000
+
+nfs-user-server (2.2beta47-9) unstable; urgency=low
+
+  * Depend on portmap.
+
+ -- Herbert Xu <herbert@debian.org>  Thu, 31 Aug 2000 21:59:05 +1100
+
+nfs-user-server (2.2beta47-8) unstable; urgency=low
+
+  * Added missing build dependencies (closes: #65940).
+
+ -- Herbert Xu <herbert@debian.org>  Tue,  4 Jul 2000 12:43:57 +1000
+
+nfs-user-server (2.2beta47-7) unstable; urgency=low
+
+  * Set the priority of the nfs-user-server binary package to extra
+    (closes: #58214).
+  * Removed dependency on nfs-common.
+
+ -- Herbert Xu <herbert@debian.org>  Mon, 19 Jun 2000 16:07:40 +1000
+
+nfs-user-server (2.2beta47-6) unstable; urgency=low
+
+  * Added chdir("/") in mountd and ugidd.
+  * Lowered priority to optional.
+  * Always start the daemons, even if exports is empty (closes: #58310).
+  * Do not resolve symbolic links in export_list, done properly this time
+    (closes: #60582).
+
+ -- Herbert Xu <herbert@debian.org>  Fri,  7 Apr 2000 19:28:44 +1000
+
+nfs-user-server (2.2beta47-5) frozen unstable; urgency=low
+
+  * Renamed to nfs-user-server (closes: #54924).
+  * Restored exports(5) (closes: #55807).
+
+ -- Herbert Xu <herbert@debian.org>  Sun, 23 Jan 2000 12:12:29 +1100
+
+nfs-server (2.2beta47-4) unstable; urgency=low
+
+  * Start the NFS servers with --oknodo (closes: #50959).
+  * Stop old ugidd server if necessary.
+
+ -- Herbert Xu <herbert@debian.org>  Tue, 23 Nov 1999 09:45:44 +1100
+
+nfs-server (2.2beta47-3) unstable; urgency=low
+
+  * Moved rpc.ugidd to /sbin and start portmap first if necessary (closes:
+    #50363).
+
+ -- Herbert Xu <herbert@debian.org>  Wed, 17 Nov 1999 12:29:47 +1100
+
+nfs-server (2.2beta47-2) unstable; urgency=low
+
+  * Added dependency on netbase in ugidd for exactly the same reason as in the
+    case of nfs-server (closes: #49921).
+
+ -- Herbert Xu <herbert@debian.org>  Fri, 12 Nov 1999 09:53:46 +1100
+
+nfs-server (2.2beta47-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fixed more syntax errors in /etc/init.d/ugidd (closes: #49870).
+
+ -- Herbert Xu <herbert@debian.org>  Thu, 11 Nov 1999 19:26:38 +1100
+
+nfs-server (2.2beta46-5) unstable; urgency=low
+
+  * Added dependency on netbase in nfs-server so that portmap is started first
+    (closes: #49569).
+
+ -- Herbert Xu <herbert@debian.org>  Tue,  9 Nov 1999 09:54:09 +1100
+
+nfs-server (2.2beta46-4) unstable; urgency=low
+
+  * Fixed syntax error in /etc/init.d/ugidd.
+
+ -- Herbert Xu <herbert@debian.org>  Tue,  2 Nov 1999 19:11:50 +1100
+
+nfs-server (2.2beta46-3) unstable; urgency=low
+
+  * Changed description so that we don't look like the only nfs server on
+    Linux per request from Andrew Pimlott.
+  * rpc.ugidd is now in its own package and started before mountnfs.sh
+    (closes: #48344).
+
+ -- Herbert Xu <herbert@debian.org>  Mon,  1 Nov 1999 21:50:02 +1100
+
+nfs-server (2.2beta46-2) unstable; urgency=low
+
+  * Use strsignal instead of hardcoded signal table.  This fixes the problem
+    of SIGPWR not being defined on Sparcs.
+  * Moved /usr/man to /usr/share/man.
+
+ -- Herbert Xu <herbert@debian.org>  Thu,  7 Oct 1999 21:38:26 +1000
+
+nfs-server (2.2beta46-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fixed FIFO problem with patch from Miquel van Smoorenburg (closes: #46199).
+
+ -- Herbert Xu <herbert@debian.org>  Wed, 29 Sep 1999 10:22:06 +1000
+
+nfs-server (2.2beta37-4) unstable; urgency=low
+
+  * Removed /etc/exports (fixes #42877).
+
+ -- Herbert Xu <herbert@debian.org>  Sun, 15 Aug 1999 12:24:34 +1000
+
+nfs-server (2.2beta37-3) unstable; urgency=low
+
+  * Document the default anonymous settings (fixes #36732).
+  * Check for /usr/doc/nfs-server rather than rpc.nfsd in init.d script (fixes
+    #40393).
+  * Set anon uid/gid for anonymous_options (fixes #35072).
+
+ -- Herbert Xu <herbert@debian.org>  Tue, 13 Jul 1999 11:14:17 +1000
+
+nfs-server (2.2beta37-2) unstable; urgency=low
+
+  * Fixed compilation errors with glibc 2.1 (fixes #27999, #33692, #39173).
+  * Fixed core dump with =public entries in exports (fixes #26783).
+  * Applied patch from Olaf Kirch for FreeBSD clients (fixes #28642, #28693).
+  * Removed showmount (fixes #30265).
+  * Do not resolve symbolic links in export_list (fixes #25780).
+
+ -- Herbert Xu <herbert@debian.org>  Wed, 23 Jun 1999 15:07:16 +1000
+
+nfs-server (2.2beta37-1) unstable; urgency=high
+
+  * New upstream version, fixes security holes.
+
+ -- Herbert Xu <herbert@debian.org>  Mon,  5 Oct 1998 13:29:24 +1000
+
+nfs-server (2.2beta36-3) unstable; urgency=low
+
+  * Applied upstream patch (c).
+
+ -- Herbert Xu <herbert@debian.org>  Sun, 27 Sep 1998 11:10:59 +1000
+
+nfs-server (2.2beta36-2) unstable; urgency=medium
+
+  * Fixed incorrect authentication for /.
+
+ -- Herbert Xu <herbert@debian.org>  Sun, 27 Sep 1998 10:56:28 +1000
+
+nfs-server (2.2beta36-1) unstable; urgency=low
+
+  * Initial Release.
+  * No longer checks for the permission of /etc/exports (fixes #23025).
+
+ -- Herbert Xu <herbert@debian.org>  Sat, 19 Sep 1998 14:00:08 +1000
+

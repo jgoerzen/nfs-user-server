@@ -190,7 +190,7 @@ bool_t
 xdr_ppathcnf(XDR *xdrs, ppathcnf *objp)
 {
 
-	 register long *buf=buf;
+	 int32_t *buf=buf;
 
 	 int i=i;
 

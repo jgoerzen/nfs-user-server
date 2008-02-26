@@ -10,8 +10,12 @@
 #include "logging.h"
 #include "signals.h"
 #include <sys/wait.h>
+#ifdef HAVE_STRSIGNAL
+#include <string.h>
+#else
 
 static const char *	get_signame(int signo);
+#endif
 
 void
 failsafe(int level, int ncopies)
@@ -111,9 +115,17 @@ failsafe(int level, int ncopies)
 					pid, running? "Continue" : "Exit");
 			} else {
 				Dprintf(L_WARNING, "failsafe: "
+#ifdef HAVE_STRSIGNAL
+					"child %d terminated by: %s. "
+#else
 					"child %d terminated by %s. "
+#endif
 					"Restarting.",
+#ifdef HAVE_STRSIGNAL
+					pid, strsignal(signo));
+#else
 					pid, get_signame(signo));
+#endif
 				child = -1; /* Restart */
 			}
 		} else if (WIFEXITED(status)) {
@@ -159,6 +171,7 @@ failsafe_loop(int level, void (*function)(void))
 	/* NOP */
 }
 
+#ifndef HAVE_STRSIGNAL
 static const char *
 get_signame(int signo)
 {
@@ -199,3 +212,4 @@ get_signame(int signo)
 	sprintf(namebuf, "signal #%d", signo);
 	return namebuf;
 }
+#endif

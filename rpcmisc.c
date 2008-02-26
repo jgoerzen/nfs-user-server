@@ -64,25 +64,25 @@ rpc_init(const char *name, int prog, int *verstbl, void (*dispatch)(),
 	asize = sizeof(saddr);
 	sock = 0;
 	if (getsockname(0, (struct sockaddr *) &saddr, &asize) == 0) {
-		int	ssize = sizeof (int);
+		int	ssize = sizeof (i);
 
 		if (saddr.sin_family != AF_INET)
 			goto not_inetd;
-		if (getsockopt(0, SOL_SOCKET, SO_TYPE, &_rpcfdtype, &ssize) < 0)
+		if (getsockopt(0, SOL_SOCKET, SO_TYPE, &i, &ssize) < 0)
 			goto not_inetd;
+		_rpcfdtype = i;
 		background_logging();	/* no more logging to stderr */
 		closedown = time(NULL) + _RPCSVC_CLOSEDOWN;
 		_rpcpmstart = 1;
 	} else {
 not_inetd:
-		_rpcfdtype = 0;
 		for (i = 0; (vers = verstbl[i]) != 0; i++)
 			pmap_unset(prog, vers);
 		sock = RPC_ANYSOCK;
 	}
 
 	if ((_rpcfdtype == 0) || (_rpcfdtype == SOCK_DGRAM)) {
-		if (_rpcfdtype == 0 && defport != 0)
+		if (_rpcpmstart == 0 && defport != 0)
 	    		sock = makesock(defport, IPPROTO_UDP, bufsiz);
 		transp = svcudp_create(sock);
 		if (transp == NULL)
@@ -97,7 +97,7 @@ not_inetd:
 	}
 
 	if ((_rpcfdtype == 0) || (_rpcfdtype == SOCK_STREAM)) {
-		if (_rpcfdtype == 0 && defport != 0)
+		if (_rpcpmstart == 0 && defport != 0)
 			sock = makesock(defport, IPPROTO_TCP, bufsiz);
 		transp = svctcp_create(sock, 0, 0);
 		if (transp == NULL)
@@ -220,11 +220,14 @@ makesock(int port, int proto, int socksz)
 	}
 #endif				/* SO_SNDBUF */
 
-	if (bind(s, (struct sockaddr *) &sin, sizeof(sin)) == -1)
-		Dprintf(L_FATAL, "Could not bind %s socket to %s:%d: %s\n",
+	if (bind(s, (struct sockaddr *) &sin, sizeof(sin)) == -1) {
+		Dprintf(L_ERROR, "Could not bind %s socket to %s:%d: %s\n",
 					prot_name, inet_ntoa(sin.sin_addr), 
 					ntohs(sin.sin_port),
 					strerror(errno));
+		close(s);
+		s = RPC_ANYSOCK;
+	}
 
 	return (s);
 }

@@ -1,0 +1,11 @@
+#!/bin/sh -e
+# $Id: postinst,v 1.2 2001/04/14 03:12:56 herbert Exp $
+
+if [ configure = "$1" ] && [ -z "$2" ] && [ ! -e /etc/exports ]; then
+	cat << EOF > /etc/exports
+# /etc/exports: the access control list for filesystems which may be exported
+#		to NFS clients.  See exports(5).
+EOF
+fi
+
+#DEBHELPER#

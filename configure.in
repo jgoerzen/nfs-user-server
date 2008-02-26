@@ -53,7 +53,7 @@ AC_CHECK_LIB(rpc, main)
 AC_CHECK_LIB(crypt, main)
 AC_CHECK_LIB(nys, main)
 AC_REPLACE_FUNCS(strerror realpath mkdir rename utimes strdup strstr getopt getopt_long)
-AC_HAVE_FUNCS(getcwd seteuid setreuid getdtablesize setgroups lchown setsid setfsuid setfsgid innetgr quotactl authdes_getucred)
+AC_HAVE_FUNCS(getcwd seteuid setreuid getdtablesize setgroups lchown setsid setfsuid setfsgid innetgr quotactl authdes_getucred strsignal)
 AC_AUTHDES_GETUCRED
 AC_BROKEN_SETFSUID
 AC_MOUNTLIST

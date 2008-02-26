@@ -20,6 +20,8 @@
 #include "ugid.h"
 #include "logging.h"
 #include "haccess.h"
+#include "rpcmisc.h"
+#include "signals.h"
 #ifdef HAVE_LIBWRAP_BUG
 #include <syslog.h>
 #endif
@@ -27,6 +29,8 @@
 
 static void	ugidprog_1(struct svc_req *rqstp, SVCXPRT *transp);
 static void	usage(void);
+static void	terminate(void);
+static RETSIGTYPE sigterm(int sig);
 
 #ifndef HAVE_RPCGEN_C
 #define authenticate_1_svc	authenticate_1
@@ -39,7 +43,13 @@ static void	usage(void);
 
 static struct option longopts[] = {
 	{ "debug", 0, 0, 'd' },
+	{ "port", required_argument, 0, 'P' },
 	{ NULL, 0, 0, 0 }
+};
+
+static int ugidd_versions[] = {
+	UGIDVERS,
+	0
 };
 
 int
@@ -47,9 +57,9 @@ main(argc, argv)
 int	argc;
 char	**argv;
 {
-	SVCXPRT	*transp;
 	int	c, longind;
 	int	foreground = 0;
+	int	port = 0;
 
 #ifndef HOSTS_ACCESS
 	fprintf(stderr,
@@ -59,40 +69,34 @@ char	**argv;
 	sleep(1);
 #endif
 
-	while ((c = getopt_long(argc, argv, "d", longopts, &longind)) != EOF) {
+	chdir("/");
+
+	while ((c = getopt_long(argc, argv, "dP:", longopts, &longind)) != EOF) {
 		switch (c) {
 		case 'd':
 			foreground = 1;
 			enable_logging("ugid");
+			break;
+		case 'P':
+			port = atoi(optarg);
+			if (port <= 0 || port > 65535) {
+				fprintf(stderr, "ugidd: bad port number: %s\n",
+					optarg);
+				usage();
+			}
 			break;
 		default:
 			usage();
 		}
 	}
 
-        (void)pmap_unset(UGIDPROG, UGIDVERS);
+	log_open("ugidd", foreground);
 
-        transp = svcudp_create(RPC_ANYSOCK);
-        if (transp == NULL) {
-                (void)fprintf(stderr, "cannot create udp service.\n");
-                exit(1);
-        }
-        if (!svc_register(transp, UGIDPROG, UGIDVERS, ugidprog_1, IPPROTO_UDP)) {
-                fprintf(stderr, "unable to register (UGIDPROG, UGIDVERS, UDP)\n");
-                exit(1);
-        }
+	/* Create services and register with portmapper */
+	_rpcfdtype = SOCK_DGRAM;
+	rpc_init("ugidd", UGIDPROG, ugidd_versions, ugidprog_1, port, 0);
 
-        transp = svctcp_create(RPC_ANYSOCK, 0, 0);
-        if (transp == NULL) {
-                fprintf(stderr, "cannot create tcp service.\n");
-                exit(1);
-        }
-        if (!svc_register(transp, UGIDPROG, UGIDVERS, ugidprog_1, IPPROTO_TCP)) {
-                fprintf(stderr, "unable to register (UGIDPROG, UGIDVERS, TCP)\n");
-                exit(1);
-        }
-
-	if (!foreground) {
+	if (!foreground && !_rpcpmstart) {
 		if ((c = fork()) > 0)
 			exit(0);
 		if (c < 0) {
@@ -117,7 +121,8 @@ char	**argv;
 #endif
 	}
 
-	log_open("ugidd", foreground);
+	install_signal_handler(SIGTERM, sigterm);
+	atexit(terminate);
 
 	svc_run();
 	Dprintf(L_ERROR, "svc_run returned\n");
@@ -127,7 +132,7 @@ char	**argv;
 static void
 usage()
 {
-	fprintf(stderr, "rpc.ugidd: [-d]\n");
+	fprintf(stderr, "rpc.ugidd: [-d] [-P port]\n");
 	exit (2);
 }
 
@@ -188,7 +193,7 @@ ugidprog_1(struct svc_req *rqstp, SVCXPRT *transp)
 		return;
 	}
 	bzero((char *)&argument, sizeof(argument));
-	if (!svc_getargs(transp, xdr_argument, &argument)) {
+	if (!svc_getargs(transp, xdr_argument, (caddr_t) &argument)) {
 		svcerr_decode(transp);
 		return;
 	}
@@ -196,7 +201,7 @@ ugidprog_1(struct svc_req *rqstp, SVCXPRT *transp)
 	if (result != NULL && !svc_sendreply(transp, xdr_result, result)) {
 		svcerr_systemerr(transp);
 	}
-	if (!svc_freeargs(transp, xdr_argument, &argument)) {
+	if (!svc_freeargs(transp, xdr_argument, (caddr_t) &argument)) {
 		(void)fprintf(stderr, "unable to free arguments\n");
 		exit(1);
 	}
@@ -318,6 +323,19 @@ gid_group_1_svc(argp, rqstp)
 		res = gr->gr_name;
 
 	return (&res);
+}
+
+
+static RETSIGTYPE
+sigterm(int sig)
+{
+	exit(0);
+}
+
+static void
+terminate(void)
+{
+	rpc_exit(UGIDPROG, ugidd_versions);
 }
 
 

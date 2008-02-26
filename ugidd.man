@@ -2,8 +2,10 @@
 .SH NAME
 ugidd \- uid/gid mapping daemons
 .SH SYNOPSIS
-.nf
+.ad l
 .B /usr/sbin/rpc.ugidd
+.B "[\ \-P\ port\ ]"
+.ad b
 .\".LP
 .\"or from SunOS inetd(8):
 .\".B rpc udp /usr/etc/rpc.ugidd 545580417 1
@@ -29,6 +31,16 @@ following lines to \fIhosts.allow\fP and \fIhosts.deny\fP:
 .I "# /etc/hosts.deny
 .I "rpc.ugidd:     ALL
 .fi
+.SH OPTIONS
+.TP
+.BR "\-P portnum" " or " "\-\-port portnum"
+Makes
+.I ugidd
+listen on port
+.B portnum
+instead of some random port. By default,
+.I ugidd
+will listen on some arbitrary port number below 1024.
 .SH "SEE ALSO"
 exports(5), inetd(8), hosts_access(5)
 .SH BUGS

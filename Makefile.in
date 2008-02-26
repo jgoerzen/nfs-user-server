@@ -95,20 +95,20 @@ SRCS		= version.c logging.c fh.c devtab.c \
 LIBSRCS		= fileblocks.c fsusage.c realpath.c strerror.c \
 		  utimes.c mkdir.c rename.c getopt.c getopt_long.c \
 		  alloca.c mountlist.c xmalloc.c \
-		  xstrdup.c strdup.c strstr.c nfsmounted.c faccess.c \
+		  xstrdup.c strdup.c strstr.c nfsmounted.c \
 		  haccess.c failsafe.c signals.c
 XDRFILES	= mount.x nfs_prot.x
 GENFILES	= mount.h mount_xdr.c mount_svc.c nfs_prot.h nfs_prot_xdr.c \
 		  ugid.h ugid_xdr.c ugid_clnt.c
 HDRS		= system.h nfsd.h auth.h fh.h logging.h fakefsuid.h \
-		  rpcmisc.h faccess.h rquotad.h rquota.h haccess.h
+		  rpcmisc.h rquotad.h rquota.h haccess.h
 LIBHDRS		= fsusage.h getopt.h mountlist.h failsafe.h signals.h
 MANPAGES5	= exports
 MANPAGES8p	= mountd nfsd $(UGIDD_MAN)
 MANPAGES8	= showmount
 MANPAGES	= $(MANPAGES5) $(MANPAGES8p) $(MANPAGES8)
 LIBOBJS		= version.o fsusage.o mountlist.o xmalloc.o xstrdup.o \
-		  nfsmounted.o faccess.o haccess.o failsafe.o \
+		  nfsmounted.o haccess.o failsafe.o \
 		  signals.o @LIBOBJS@ @ALLOCA@
 OBJS		= logging.o fh.o devtab.o auth_init.o auth_clnt.o auth.o
 NFSD_OBJS	= nfsd.o rpcmisc.o nfs_dispatch.o getattr.o setattr.o \
@@ -116,7 +116,7 @@ NFSD_OBJS	= nfsd.o rpcmisc.o nfs_dispatch.o getattr.o setattr.o \
 MOUNTD_OBJS	= mountd.o rpcmisc.o mount_dispatch.o mount_xdr.o rmtab.o \
 		  $(OBJS)
 SHOWMOUNT_OBJS	= showmount.o mount_xdr.o
-UGIDD_OBJS	= ugidd.o ugid_xdr.o logging.o
+UGIDD_OBJS	= ugidd.o ugid_xdr.o logging.o rpcmisc.o
 DAEMONS		= $(rpcprefix)mountd $(rpcprefix)nfsd $(UGIDD_PROG)
 CLIENTS		= showmount
 

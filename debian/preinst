@@ -1,0 +1,12 @@
+#!/bin/sh -e
+# $Id: preinst,v 1.3 2000/01/20 02:45:48 herbert Exp $
+
+if [ "$1" = install -a -x /etc/init.d/netstd_nfs ]; then
+	/etc/init.d/netstd_nfs stop
+fi
+
+if [ -f /etc/init.d/nfs-server -a ! -f /etc/init.d/nfs-user-server ]; then
+	cp -p /etc/init.d/nfs-server /etc/init.d/nfs-user-server
+fi
+
+#DEBHELPER#

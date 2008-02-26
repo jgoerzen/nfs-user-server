@@ -1,0 +1,32 @@
+Source: nfs-user-server
+Section: net
+Priority: optional
+Maintainer: Daniel Baumann <daniel@debian.org>
+Standards-Version: 3.7.2
+Build-Depends: autoconf, debhelper, libwrap0-dev | libwrap-dev
+
+Package: nfs-user-server
+Architecture: any
+Depends: portmap, ${shlibs:Depends}
+Replaces: nfs-server
+Conflicts: nfs-server
+Provides: nfs-server
+Priority: extra
+Description: User space NFS server
+ This package contains all necessary programs to make your Linux machine act
+ as an NFS server, being an NFS daemon (rpc.nfsd), a mount daemon (rpc.mountd).
+ .
+ Unlike other NFS daemons, this NFS server runs entirely in user space.  This
+ makes it a tad slower than other NFS implementations, and also introduces
+ some awkwardnesses in the semantics (for instance, moving a file to a
+ different directory will render its file handle invalid).
+ .
+ There is currently no support for file locking.
+
+Package: ugidd
+Architecture: any
+Depends: portmap, ${shlibs:Depends}
+Replaces: nfs-server (<< 2.2beta46-4)
+Description: NFS UID mapping daemon
+ This package contains the UID mapping daemon (rpc.ugidd) which is used on
+ NFS clients to do UID/GID mapping.

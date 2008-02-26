@@ -1,0 +1,27 @@
+This package was split from netstd by Herbert Xu herbert@debian.org on
+Sat, 19 Sep 1998 14:00:08 +1000.
+
+netstd was created by Peter Tobias tobias@et-inf.fho-emden.de on
+Wed, 20 Jul 1994 17:23:21 +0200.
+
+It was downloaded from
+ftp://linux.mathematik.tu-darmstadt.de/pub/linux/people/okir/
+
+Copyright:
+
+Much of the code in this package was originally  written  by
+Mark Shand, and is placed under the following copyright:
+
+   This  software may be used for any purpose provided
+   the above  copyright  notice  is  retained.  It  is
+   supplied  as  is,  with  no warranties expressed or
+   implied.
+
+Other code, especially that written by Rick Sladkey and some
+replacement routines included from the GNU libc, are covered
+by the GNU General Public License, version 2,  or  (at  your
+option) any later version.
+
+The GPL can be found at /usr/share/common-licenses/GPL.
+
+$Id: copyright,v 1.4 2001/08/16 10:31:45 herbert Exp $

@@ -143,6 +143,21 @@ out:
 	return okay;
 }
 
+static inline int
+auth_atob(const char *name, struct in_addr *ap)
+{
+	int m;
+
+	if (!isdigit(*name))
+		return 0;
+	for (m = 0; isdigit(*name); name++)
+		m = m * 10 + (unsigned char) *name - '0';
+	if (m > 32)
+		return 0;
+	ap->s_addr = m ? ~((1 << (32 - m)) - 1) : 0;
+	return 1;
+}
+
 /*
  * Get a client entry for a specific name or pattern.
  * If necessary, this function performs a hostname lookup to
@@ -614,7 +629,9 @@ auth_create_client(const char *hname, struct hostent *hp)
 	if (auth_aton(hname, &haddr, &ename)) {
 		if (*ename == '\0')
 			is_hostaddr = 1;
-		else if (*ename == '/' && auth_aton(ename+1, &hmask, NULL))
+		else if (*ename == '/' &&
+			 (auth_aton(ename+1, &hmask, NULL) ||
+			  auth_atob(ename+1, &hmask)))
 			is_netmask = 1;
 	}
 	is_special = is_wildcard + is_netgroup + is_netmask;

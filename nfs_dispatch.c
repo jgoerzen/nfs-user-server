@@ -147,7 +147,7 @@ nfs_dispatch(struct svc_req *rqstp, SVCXPRT *transp)
 	nfsclient = NULL;
 
 	memset(&argument, 0, dent->arg_size);
-	if (!svc_getargs(transp, (xdrproc_t) dent->xdr_argument, &argument)) {
+	if (!svc_getargs(transp, (xdrproc_t) dent->xdr_argument, (caddr_t) &argument)) {
 		svcerr_decode(transp);
 		goto done;
 	}
@@ -173,7 +173,7 @@ nfs_dispatch(struct svc_req *rqstp, SVCXPRT *transp)
 	svc_sendreply(transp, dent->xdr_result, (caddr_t) &result);
 #endif
 
-	if (!svc_freeargs(transp, (xdrproc_t) dent->xdr_argument, &argument)) {
+	if (!svc_freeargs(transp, (xdrproc_t) dent->xdr_argument, (caddr_t) &argument)) {
 		Dprintf(L_ERROR, "unable to free RPC arguments, exiting\n");
 		exit(1);
 	}

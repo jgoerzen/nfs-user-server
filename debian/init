@@ -1,0 +1,51 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:		nfs-user-server nfs-server
+# Required-Start:	$network portmap
+# Required-Stop:	$network portmap
+# Default-Start:	2 3 4 5
+# Default-Stop:		0 1 6
+# Short-Description:	Startup script for the NFS servers.
+### END INIT INFO
+
+set -e
+
+DESC="NFS servers"
+
+test -x /usr/sbin/rpc.nfsd -a -f /etc/exports || exit 0
+
+case "$1" in
+start)
+	printf "Starting $DESC:"
+	start-stop-daemon --start --oknodo --quiet --exec /usr/sbin/rpc.nfsd
+	printf " nfsd"
+	start-stop-daemon --start --oknodo --quiet --exec /usr/sbin/rpc.mountd
+	printf " mountd"
+	printf ".\n"
+	;;
+stop)
+	printf "Stopping $DESC:"
+	start-stop-daemon --stop --oknodo --quiet --exec /usr/sbin/rpc.mountd
+	printf " mountd"
+	start-stop-daemon --stop --oknodo --quiet --exec /usr/sbin/rpc.nfsd
+	printf " nfsd"
+	printf ".\n"
+	;;
+reload | force-reload)
+	printf "Reloading $DESC' configuration files.\n"
+	start-stop-daemon --stop --signal 1 --quiet --exec /usr/sbin/rpc.mountd
+	start-stop-daemon --stop --signal 1 --quiet --exec /usr/sbin/rpc.nfsd
+	;;
+restart)
+	$0 stop
+	sleep 1
+	$0 start
+	;;
+*)
+	printf "Usage: $0 {start|stop|restart|reload|force-reload}\n" >&2
+	exit 1
+	;;
+esac
+
+exit 0

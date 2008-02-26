@@ -1,0 +1,11 @@
+#!/bin/sh -e
+# $Id: ugidd.preinst,v 1.2 1999/11/22 22:47:28 herbert Exp $
+
+# Before ugidd was split from nfs-server, it lived in /usr/sbin.
+if [ "$1" = install -a \( -x /etc/init.d/nfs-server -o \
+			  -x /etc/init.d/netstd_nfs \) -a \
+     -x /usr/sbin/rpc.ugidd ]; then
+	start-stop-daemon --stop --quiet --oknodo --exec /usr/sbin/rpc.ugidd
+fi
+
+#DEBHELPER#

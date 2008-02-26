@@ -200,7 +200,7 @@ char **argv;
 		memset(&exportlist, '\0', sizeof(exportlist));
 		clnt_stat = clnt_call(mclient, MOUNTPROC_EXPORT,
 			(xdrproc_t) xdr_void, NULL,
-			(xdrproc_t) xdr_exports, &exportlist,
+			(xdrproc_t) xdr_exports, (caddr_t) &exportlist,
 			total_timeout);
 		if (clnt_stat != RPC_SUCCESS) {
 			clnt_perror(mclient, "rpc mount export");
@@ -233,7 +233,7 @@ char **argv;
 	memset(&dumplist, '\0', sizeof(dumplist));
 	clnt_stat = clnt_call(mclient, MOUNTPROC_DUMP,
 		(xdrproc_t) xdr_void, NULL,
-		(xdrproc_t) xdr_mountlist, &dumplist,
+		(xdrproc_t) xdr_mountlist, (caddr_t) &dumplist,
 		total_timeout);
 	if (clnt_stat != RPC_SUCCESS) {
 		clnt_perror(mclient, "rpc mount dump");

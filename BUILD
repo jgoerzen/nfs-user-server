@@ -48,7 +48,7 @@ while [ $# -ne 0 ]; do
 	shift
 done
 
-function read_yesno {
+read_yesno() {
 	ans=""
 	echo >&2
 	default=$2
@@ -84,7 +84,7 @@ function read_yesno {
 	echo $ans
 }
 
-function read_ugid {
+read_ugid() {
 	ans=""
 	prompt="$2 [default $3 $4] "
 	default=$3
@@ -145,7 +145,7 @@ EOF
 
 if ! $batch; then
 	echo -n "Please press return to continue"
-	read
+	read ans
 fi
 
 version=`cat .version`

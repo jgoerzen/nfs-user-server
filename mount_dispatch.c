@@ -131,7 +131,7 @@ mount_dispatch(struct svc_req *rqstp, SVCXPRT *transp)
 	dent = &dtbl[proc_index];
 
 	memset(&argument, 0, dent->arg_size);
-	if (!svc_getargs(transp, (xdrproc_t) dent->xdr_argument, &argument)) {
+	if (!svc_getargs(transp, (xdrproc_t) dent->xdr_argument, (caddr_t) &argument)) {
 		svcerr_decode(transp);
 		goto done;
 	}
@@ -148,7 +148,7 @@ mount_dispatch(struct svc_req *rqstp, SVCXPRT *transp)
 	if (!svc_sendreply(transp, dent->xdr_result, (caddr_t) resp)) {
 		svcerr_systemerr(transp);
 	}
-	if (!svc_freeargs(transp, (xdrproc_t) dent->xdr_argument, &argument)) {
+	if (!svc_freeargs(transp, (xdrproc_t) dent->xdr_argument, (caddr_t) &argument)) {
 		Dprintf(L_ERROR, "unable to free RPC arguments, exiting\n");
 		exit(1);
 	}

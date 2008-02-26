@@ -36,6 +36,7 @@
 #define CHK_READ	0
 #define CHK_WRITE	1
 #define CHK_NOACCESS	2
+#define CHK_ROOT	4
 
 /* Make larger reads possible. Without crashing the machine :-) */
 #undef NFS_MAXDATA
@@ -173,7 +174,8 @@ auth_fh(struct svc_req *rqstp, nfs_fh *fh, nfsstat *statp, int flags)
 		return NULL;
 	}
 
-	auth_user(nfsmount, rqstp);
+	if (!(flags & CHK_ROOT) || strcmp(nfsmount->path, fhc->path))
+		auth_user(nfsmount, rqstp);
 
 	*statp = NFS_OK;
 	return fhc;
@@ -244,7 +246,7 @@ nfsd_nfsproc_getattr_2(nfs_fh *argp, struct svc_req *rqstp)
 	nfsstat status;
 	fhcache *fhc;
 
-	fhc = auth_fh(rqstp, argp, &status, CHK_READ);
+	fhc = auth_fh(rqstp, argp, &status, CHK_READ | CHK_ROOT);
 	if (fhc == NULL)
 		return status;
 
@@ -575,7 +577,12 @@ nfsd_nfsproc_create_2(createargs *argp, struct svc_req *rqstp)
 #endif
 
 			/* MvS: Some clients use chardev 0xFFFF for a FIFO. */
+#if defined(major) && defined(minor)
+			if (S_ISCHR(argp->attributes.mode) &&
+			    major(dev) == 0xff && minor(dev) == 0xff) {
+#else
 			if (S_ISCHR(argp->attributes.mode) && dev == 0xFFFF) {
+#endif
 				is_borc = 0;
 				dev = 0;
 				argp->attributes.mode &= ~S_IFMT;
@@ -882,7 +889,9 @@ nfsd_nfsproc_readdir_2(readdirargs *argp, struct svc_req *rqstp)
 
 	/* This code is from Mark Shand's version */
 	errno = 0;
-	if (efs_lstat(h->path, &sbuf) < 0 || !(S_ISDIR(sbuf.st_mode)))
+	if (efs_lstat(h->path, &sbuf) < 0)
+		return (NFSERR_ACCES);
+	if (!S_ISDIR(sbuf.st_mode))
 		return (NFSERR_NOTDIR);
 	if ((dirp = efs_opendir(h->path)) == NULL)
 		return ((errno ? nfs_errno() : NFSERR_NAMETOOLONG));
@@ -940,7 +949,7 @@ nfsd_nfsproc_statfs_2(nfs_fh *argp, struct svc_req *rqstp)
 	char *path;
 	struct fs_usage fs;
 
-	fhc = auth_fh(rqstp, argp, &status, CHK_READ | CHK_NOACCESS);
+	fhc = auth_fh(rqstp, argp, &status, CHK_READ | CHK_NOACCESS | CHK_ROOT);
 	if (fhc == NULL)
 		return status;
 	path = fhc->path;

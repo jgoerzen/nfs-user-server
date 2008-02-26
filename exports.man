@@ -8,7 +8,7 @@ exports \- NFS file systems being exported
 The file
 .I /etc/exports
 serves as the access control list for file systems which may be
-exported to NFS clients.  It it used by both the NFS mount daemon,
+exported to NFS clients.  It is used by both the NFS mount daemon,
 .IR mountd (8)
 and the NFS file server daemon
 .IR nfsd (8).
@@ -75,11 +75,12 @@ than IPPORT_RESERVED (1024). This option is on by default. To turn it
 off, specify
 .IR insecure .
 .TP
+.IR ro
+Disallow the client to modify files and directories.  The client is only
+allowed to issue read-only requests.
+.TP
 .IR rw
-Allow the client to modify files and directories. The default is to
-restrict the client to read-only request, which can be made explicit
-by using the
-.IR ro " option.
+Allow the client to modify files and directories. This is the default.
 .TP
 .I noaccess
 This makes everything below the directory inaccessible for the named
@@ -98,6 +99,14 @@ hierarchy is not mounted at its root.
 .TP
 .IR link_absolute
 Leave all symbolic link as they are. This is the default operation.
+.SS Anonymous Entries
+.PP
+Entries where hosts are not specified are known as anonymous entries.  They
+have different default settings compared to normal entries.  The differences
+include
+.IR all_squash ,
+.IR no_secure ", and"
+.IR ro .
 .SS User ID Mapping
 .PP
 .I nfsd

@@ -1,0 +1,91 @@
+#!/usr/bin/make -f
+# $Id: rules,v 1.19 2003/10/31 21:18:05 herbert Exp $
+# Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+build:
+	dh_testdir
+
+	if [ ! -f config.h.in.old -a -f config.h.in ]; then \
+		mv config.h.in config.h.in.old; \
+	fi
+	if [ ! -f config.h.in ]; then autoheader; fi
+	if [ ! -f configure.old -a -f configure ]; then \
+		mv configure configure.old; \
+	fi
+	if [ ! -f configure ]; then autoconf; fi
+	if [ ! -f Makefile ]; then \
+		CFLAGS="-g -O2 -DTIME_WITH_SYS_TIME" \
+			./BUILD < debian/build.cfg; \
+	fi
+	$(MAKE) LDFLAGS=
+
+clean:
+	dh_testdir
+	dh_testroot
+
+	-if [ -f showmount ]; then $(MAKE) clean mostlyclean distclean; fi
+	-if [ -f Makefile ]; then $(MAKE) mostlyclean distclean; fi
+	-if [ -f site.h ]; then $(MAKE) distclean; fi
+	-if [ -f configure.old ]; then mv configure.old configure; fi
+	-if [ -f config.h.in.old ]; then mv config.h.in.old config.h.in; fi
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	$(MAKE) install_prefix=`pwd`/debian/tmp install
+	mv debian/tmp/usr/man debian/tmp/usr/share
+	rm debian/tmp/usr/sbin/showmount
+	rm debian/tmp/usr/share/man/man8/showmount.8
+	rm debian/tmp/usr/share/man/man8/rpc.*
+	for i in debian/tmp/usr/share/man/man8/*; do \
+		j=$$(basename $$i); \
+		mv $$i debian/tmp/usr/share/man/man8/rpc.$$j; \
+	done
+
+	dh_installinit -p nfs-user-server -u"defaults 25"
+	dh_installinit -p ugidd -u"start 44 S ."
+	dh_movefiles
+
+# ugidd needs to be in /sbin since it is started before mountnfs.sh.
+	mv debian/ugidd/usr/sbin/rpc.ugidd debian/ugidd/sbin
+	rmdir debian/ugidd/usr/sbin
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+#	dh_testversion
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installmenu
+	dh_installcron
+	dh_installman
+#	dh_undocumented
+	dh_installchangelogs ChangeLog
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+#	dh_makeshlibs
+	dh_md5sums
+	dh_builddeb
+
+source diff:                                                                  
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary

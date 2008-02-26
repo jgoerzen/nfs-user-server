@@ -23,6 +23,7 @@
 #define EXPORTSFILE	"/etc/exports"
 #endif
 
+#if 0
 /* Support for file access control on /etc/exports by Alex Yuriev. */
 #include "faccess.h"
 #ifndef EXPORTSOWNERUID
@@ -30,6 +31,7 @@
 #endif
 #ifndef EXPORTSOWNERGID
 #define EXPORTSOWNERGID		((gid_t) 0)
+#endif
 #endif
 
 exportnode *	export_list = NULL;
@@ -395,6 +397,7 @@ auth_init(char *fname)
 	auth_file = fname;	/* Save for re-initialization */
 
 	/* Check protection of exports file. */
+#if 0	/* A man's house is his castle. */
 	switch(iCheckAccess(auth_file, EXPORTSOWNERUID, EXPORTSOWNERGID)) {
 	case FACCESSWRITABLE:
 		Dprintf(L_ERROR,
@@ -409,6 +412,7 @@ auth_init(char *fname)
 		Dprintf(L_ERROR, "exiting because of security violation.\n");
 		exit(1);
 	}
+#endif
 
 	if ((ef = fopen(fname, "r")) == NULL) {
 		Dprintf(L_ERROR, "Could not open exports file %s: %s\n",
@@ -468,7 +472,7 @@ auth_init(char *fname)
 
 		/* Build the RPC mount export list data structure. */
 		resex = (exportnode *) xmalloc(sizeof *resex);
-		resex->ex_dir = mount_point;
+		resex->ex_dir = xstrdup(path);
 		resex->ex_groups = NULL;
 
 #ifndef NEW_STYLE_EXPORTS_FILE

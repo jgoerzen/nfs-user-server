@@ -602,7 +602,7 @@ ugid_get_client(SVCXPRT *xprt, unsigned int prog, unsigned int vers,
 	 * the server's port after clntudp_create, so we fetch it
 	 * explicitly.
 	 */
-	clnt_control(clnt, CLGET_SERVER_ADDR, &addr);
+	clnt_control(clnt, CLGET_SERVER_ADDR, (caddr_t) &addr);
 	if (!SECURE_PORT(addr.sin_port)) {
 		Dprintf(L_ERROR, "%s on %s runs on unprivileged port.\n",
 				name, inet_ntoa(addr.sin_addr));
