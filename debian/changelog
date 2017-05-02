@@ -1,3 +1,10 @@
+nfs-user-server (2.2beta47-25.jessie1) UNRELEASED; urgency=medium
+
+  * Non-maintainer build.
+  * Built for jessie. 
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 02 May 2017 00:12:19 -0500
+
 nfs-user-server (2.2beta47-25) unstable; urgency=low
 
   * Also adding LSB headers in ugidd init script.
