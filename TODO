@@ -1,0 +1,45 @@
+To Do Major
+===========
+
+rpc.keyserv (Anybody wants to trash filesystems? Contact alex@bach.cis.temple.edu)
+rpc.statd (being prepared)
+rpc.lockd (being prepared)
+change exports file format to SunOS style?
+add exportfs 
+exports file path
+logging file path
+add fsync option?
+strictly no NFS re-exporting; don't even allow lookups of "." and ".."
+Fine-tune XDR code to avoid mallocs wherever possible
+
+Todo Minor
+==========
+
+clean up code
+
+Done
+====
+detect and use local uid and gid for nobody if possible
+use PATH_MAX and NAME_MAX instead of MAXPATHLEN and MAXNAMLEN
+add Stephen's changes
+solaris2 doesn't declare _rpcfdtype
+change all bzero and index to ansi equivalents
+add Eric's changes
+add Job's changes
+add rules for generated files
+header dependencies for all files
+use native rpcgen or not?  yes
+some systems don't have TIOCNOTTY
+SYSLOG support
+mkdir support
+rename support
+add Mark's changes
+copyright for strerror.c
+svc_getcaller not declared on sysv4
+some cc's don't like sizeof(void) but gcc yields 1
+add ugidd mapping
+add hosts_access to ugidd
+create of a special file should work even on a rofs (bug in SunOS)
+add use of SIGHUP to reread exports file
+creation of unix domain sockets (Miquel van Smoorenburg)
+Replace historic README file

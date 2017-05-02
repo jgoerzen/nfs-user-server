@@ -1,0 +1,37 @@
+
+Installation Instructions for the Universal NFS Server 2.2.
+-----------------------------------------------------------
+
+To compile nfsd and its fellow programs, do the following:
+
+1.	Configure the package for your system. This is a two-step process.
+
+	You first have to run the BUILD script that will ask you some
+	questions for your site-specific configuration. It will then create
+	the file site.h and site.mk, and invoke the GNU configure script.
+
+	The `configure' shell script attempts to guess correct values
+	for various system-dependent variables used during compilation,
+	and creates the Makefile and the config.h header file.
+	It also creates a file `config.status' that you can run in the
+	future to recreate the current configuration.
+
+2.	Type `make' to compile the package. By default, the package is
+	compiled with optimization (-O).  If you want, you can override
+	the `make' variables CFLAGS and LDFLAGS like this:
+
+	make CFLAGS=-O6 LDFLAGS=-s
+
+4.	Type `make install' to install the programs and documentation.
+	By default, all programs are installed in /usr/sbin.
+
+5.	You can remove the program binaries and object files from the
+	source directory by typing `make clean'.  To also remove the
+	Makefile, the header file containing system-dependent
+	definitions and `config.status' (all the files that `configure'
+	created), type `make distclean'.
+
+The file `configure.in' is used as a template to create `configure' by
+a program called `autoconf'.  You will only need it if you want to
+regenerate `configure'. The current configure.in script requires 
+GNU autoconf version 2 or above.

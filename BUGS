@@ -1,0 +1,38 @@
+
+
+	If you suspect a bug with nfsd, please report it to
+
+		unfsd@monad.swb.de
+
+	I will try to answer you ASAP. Please make sure to include
+	the following information in your bug report:
+
+	 *	Version of nfsd you're using.
+	 *	The client with which these problems occur (OS, ...).
+	 *	What compiler you used to compile nfsd. If you run
+		gcc-elf, please check if the problem also exists when
+		you make nfsd with a.out.
+	 *	Your /etc/exports file, or relevant parts thereof.
+	 *	Unless it's too large, a debug trace of the problem.
+		Refer to the nfsd manpage on how to make nfsd generate
+		a debug trace.
+
+	These informations will likely help me find any bugs faster.
+
+
+	FOR YOUR OWN SAFETY
+
+	If you send a debug trace that contains file handle data,
+	please consider using PGP to encrypt it. Anyone intercepting
+	your mail can abuse these file handles to do bad things to your
+	NFS server if it's not firewalled. My PGP key is available by
+	fingering okir@brewhq.swb.de.
+
+	Also, when reporting bugs on Usenet, it is *not* wise to
+	post your exports file or debug traces that contain address or
+	file handle data unless you are sure your NFS server is not
+	reachable from the Internet.
+
+
+	Thank you for your cooperation
+	Olaf

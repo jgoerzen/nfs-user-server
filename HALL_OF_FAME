@@ -1,0 +1,42 @@
+
+
+		Linux UNFSD Hall of Fame
+
+
+Here's a list of people the current version of the Universal NFSD owes
+a lot to.  Foremost, of course, are the original developers of nfsd:
+
+			Mark Shand
+			Donald Becker
+			Rick Sladkey
+			Orest Zborowski
+			Fred van Kempen
+
+Apart from these, a large number of Linux users and developers have
+helped me a lot in maintaining and enhancing it, usually by stumbling
+over all the silly bugs I introduced while adding new knobs and bells,
+and by actually looking into the problems and providing patches and debug
+traces:
+
+	Mike Castle <mcastle@umr.edu>
+	David Coons <davec@fa.disney.com>
+	Holger Grothe <grothe@mathematik.th-darmstadt.de>
+	H.P. Heidinger <hph@hphbbs.ruhr.de>
+	Jan Kasprzac <kas@foresta.cz>
+	Petri Kutvonen <Petri.Kutvonen@Helsinki.FI>
+	Ari Lemmke <arl@xgw.fi>
+	Walter Misar <misar@rbg.informatik.th-darmstadt.de>
+	Alec Muffet <Alec.Muffet@UK.Sun.COM>
+	Eckebrecht von Pappenheim <edi@edefix.han.de>
+	Jon Seymour <jon@zeta.org.au>
+	Dariush Shirazi <dshirazi@uhl.uiowa.edu>
+	Wade R. Schauer <wade@sal.calweb.com>
+	Miquel van Smoorenburg <miquels@drinkel.ow.org>
+	Klaus Steinberger <Klaus.Steinberger@physik.tu-muenchen.de>
+	Peter Tobias <tobias@server.et-inf.fho-emden.de>
+	Linus Torvalds <torvalds@cs.helsinki.fi>
+	Michael Vishchers vishchers@nev.psi.de
+	Alexander O. Yuriev <alex@bach.cis.temple.edu>
+
+Many thanks, folks!
+Olaf

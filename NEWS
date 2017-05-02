@@ -1,0 +1,54 @@
+Changes from 2.0 to 2.2
+
+* Support for multiple nfsd's running in parallel.
+* Implement root_squash and no_root_squash mount options. Note: root_squash
+  is on by default, so you have to insert no_root_squash where appropriate
+  or your configuration might break.
+* New set of uid squash options: squash_uids, squash_gids (specify
+  list of uids/gids to squash), all_squash, anon_uid and anon_gid
+  (override uid/gid of anon user for specific clients), noaccess (exclude
+  subdirectories).
+* Different log levels for debugging.
+* Netmask/netgroup support in /etc/exports.
+* mountd now supports /etc/rmtab and showmount -a.
+* export file re-reading with SIGHUP in nfsd and mountd.
+* Interactive BUILD script.
+* Uid/gid mapping:
+    -	using Mark Shand's ugidd.
+    -	using a file for static mapping.
+    -	NIS-based mapping querying the client's NIS server.
+* Patch to perform per-call profiling of the server.
+* authenticate fh's on every request.
+* Use setfsuid/setfsgid if available for setting owner/group on file
+  access rather than seteuid.
+* Fixed a fair number of bugs.
+* Support for WebNFS
+* Run multiple server processes
+
+Changes from version 1.5 to 2.0:
+
+* new configuration based on autoconf and GNU standards
+* showmount doesn't mangle the output of exports to (everybody)
+* the symlink bug in mountd is REALLY fixed this time
+* all programs support long options
+* create works correctly on non-files
+* mknod is now fully supported
+* execute only programs now work correctly
+* mentioning a client twice in the exports file doesn't cause looping
+* rogue clients cannot search past a mount point
+* both read-only and read-write filesystems can be exported to the same client
+* supplementary groups are supported if the host supports them
+
+Not finished yet:
+
+* exports file now conforms to SunOS syntax
+
+Special thanks for this version go to:
+
+* Mark Eichin <eichin@cygnus.com>
+* Job de Haas <JOB_H@TUDER3.ET.TUDELFT.NL>
+* Eric Kasten <tigger@tigger.cl.msu.edu>
+* Stephen Harris <hsw1@papa.attmail.com>
+* Ross Martin <martin@enws125.EAS.ASU.EDU>
+* Glenn Moloney <glenn@tauon.ph.unimelb.edu.au>
+* Ross Becker <beckerr@pyrite.som.cwru.edu>

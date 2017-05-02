@@ -1,0 +1,261 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if on AIX 3.
+   System headers sometimes define this.
+   We just want to avoid a redefinition error message.  */
+#ifndef _ALL_SOURCE
+#undef _ALL_SOURCE
+#endif
+
+/* Define if using alloca.c.  */
+#undef C_ALLOCA
+
+/* Define to empty if the keyword does not work.  */
+#undef const
+
+/* Define to one of _getb67, GETB67, getb67 for Cray-2 and Cray-YMP systems.
+   This function is required for alloca.c support on those systems.  */
+#undef CRAY_STACKSEG_END
+
+/* Define to the type of elements in the array set by `getgroups'.
+   Usually this is either `int' or `gid_t'.  */
+#undef GETGROUPS_T
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef gid_t
+
+/* Define if you have alloca, as a function or macro.  */
+#undef HAVE_ALLOCA
+
+/* Define if you have <alloca.h> and it should be used (not on Ultrix).  */
+#undef HAVE_ALLOCA_H
+
+/* Define if you don't have vprintf but do have _doprnt.  */
+#undef HAVE_DOPRNT
+
+/* Define if your struct stat has st_blksize.  */
+#undef HAVE_ST_BLKSIZE
+
+/* Define if your struct stat has st_blocks.  */
+#undef HAVE_ST_BLOCKS
+
+/* Define if your struct stat has st_rdev.  */
+#undef HAVE_ST_RDEV
+
+/* Define if utime(file, NULL) sets file's timestamp to the present.  */
+#undef HAVE_UTIME_NULL
+
+/* Define if you have the vprintf function.  */
+#undef HAVE_VPRINTF
+
+/* Define if major, minor, and makedev are declared in <mkdev.h>.  */
+#undef MAJOR_IN_MKDEV
+
+/* Define if major, minor, and makedev are declared in <sysmacros.h>.  */
+#undef MAJOR_IN_SYSMACROS
+
+/* Define if on MINIX.  */
+#undef _MINIX
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef mode_t
+
+/* Define if the system does not provide POSIX.1 features except
+   with this defined.  */
+#undef _POSIX_1_SOURCE
+
+/* Define if you need to in order for stat and other things to work.  */
+#undef _POSIX_SOURCE
+
+/* Define as the return type of signal handlers (int or void).  */
+#undef RETSIGTYPE
+
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at run-time.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown
+ */
+#undef STACK_DIRECTION
+
+/* Define if the `S_IS*' macros in <sys/stat.h> do not work properly.  */
+#undef STAT_MACROS_BROKEN
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef uid_t
+
+/* XXX */
+#undef CRAY_STACKSEG_END
+
+/* Define if your rpcgen has the -C option to generate ANSI C.  */
+#undef HAVE_RPCGEN_C
+
+/* Define if your rpcgen has the -I option to generate servers
+   that can be started from a port monitor like inetd or the listener.  */
+#undef HAVE_RPCGEN_I
+
+/* Define if your rpc/xdr.h declares the xdrproc_t type. */
+#undef HAVE_XDRPROC_T
+
+/* Define if your system uses the OSF/1 method of getting the mount list.  */
+#undef MOUNTED_GETFSSTAT
+
+/* Define if your system uses the SysVr4 method of getting the mount list.  */
+#undef MOUNTED_GETMNTENT2
+
+/* Define if your system uses the AIX method of getting the mount list.  */
+#undef MOUNTED_VMOUNT
+
+/* Define if your system uses the SysVr3 method of getting the mount list.  */
+#undef MOUNTED_FREAD_FSTYP
+
+/* Define if your system uses the BSD4.3 method of getting the mount list.  */
+#undef MOUNTED_GETMNTENT1
+
+/* Define if your system uses the BSD4.4 method of getting the mount list.  */
+#undef MOUNTED_GETMNTINFO
+
+/* Define if your system uses the Ultrix method of getting the mount list.  */
+#undef MOUNTED_GETMNT
+
+/* Define if your system uses the OSF/1 method of getting fs usage.  */
+#undef STATFS_OSF1
+
+/* Define if your system uses the SysVr2 method of getting fs usage.  */
+#undef STAT_READ
+
+/* Define if your system uses the BSD4.3 method of getting fs usage.  */
+#undef STAT_STATFS2_BSIZE
+
+/* Define if your system uses the BSD4.4 method of getting fs usage.  */
+#undef STAT_STATFS2_FSIZE
+
+/* Define if your system uses the Ultrix method of getting fs usage.  */
+#undef STAT_STATFS2_FS_DATA
+
+/* Define if your system uses the SysVr3 method of getting fs usage.  */
+#undef STAT_STATFS4
+
+/* Define if your system uses the SysVr4 method of getting fs usage.  */
+#undef STAT_STATVFS
+
+/* Define if you're using libwrap.a to protect ugidd, and libwrap.a
+ * gives you `undefined symbol: deny_severity' when linking.		*/
+#undef HAVE_LIBWRAP_BUG
+
+/* Define if your system has BSD-style signals (i.e. the handler is
+ * reinstalled automatically).						*/
+#undef HAVE_BSD_SIGNALS
+
+/* Define if your system defines authdes_getucred in rpc/auth_des.h */
+#undef HAVE_AUTHDES_GETUCRED_DECL
+
+/* Define if your setfsuid rejects negative uids */
+#undef HAVE_BROKEN_SETFSUID
+
+/* Define these if sys/types.h doesn't */
+#undef dev_t
+#undef ino_t
+
+/* Sizes of various types */
+#undef SIZEOF_DEV_T
+#undef SIZEOF_INO_T
+#undef SIZEOF_UID_T
+#undef SIZEOF_GID_T
+#undef SIZEOF_UNSIGNED_SHORT
+#undef SIZEOF_UNSIGNED_INT
+#undef SIZEOF_UNSIGNED_LONG
+
+/* Define if you have the authdes_getucred function.  */
+#undef HAVE_AUTHDES_GETUCRED
+
+/* Define if you have the getcwd function.  */
+#undef HAVE_GETCWD
+
+/* Define if you have the getdtablesize function.  */
+#undef HAVE_GETDTABLESIZE
+
+/* Define if you have the innetgr function.  */
+#undef HAVE_INNETGR
+
+/* Define if you have the lchown function.  */
+#undef HAVE_LCHOWN
+
+/* Define if you have the quotactl function.  */
+#undef HAVE_QUOTACTL
+
+/* Define if you have the seteuid function.  */
+#undef HAVE_SETEUID
+
+/* Define if you have the setfsgid function.  */
+#undef HAVE_SETFSGID
+
+/* Define if you have the setfsuid function.  */
+#undef HAVE_SETFSUID
+
+/* Define if you have the setgroups function.  */
+#undef HAVE_SETGROUPS
+
+/* Define if you have the setreuid function.  */
+#undef HAVE_SETREUID
+
+/* Define if you have the setsid function.  */
+#undef HAVE_SETSID
+
+/* Define if you have the <dirent.h> header file.  */
+#undef HAVE_DIRENT_H
+
+/* Define if you have the <fcntl.h> header file.  */
+#undef HAVE_FCNTL_H
+
+/* Define if you have the <memory.h> header file.  */
+#undef HAVE_MEMORY_H
+
+/* Define if you have the <ndir.h> header file.  */
+#undef HAVE_NDIR_H
+
+/* Define if you have the <string.h> header file.  */
+#undef HAVE_STRING_H
+
+/* Define if you have the <sys/dir.h> header file.  */
+#undef HAVE_SYS_DIR_H
+
+/* Define if you have the <sys/file.h> header file.  */
+#undef HAVE_SYS_FILE_H
+
+/* Define if you have the <sys/fsuid.h> header file.  */
+#undef HAVE_SYS_FSUID_H
+
+/* Define if you have the <sys/ndir.h> header file.  */
+#undef HAVE_SYS_NDIR_H
+
+/* Define if you have the <sys/time.h> header file.  */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the <syslog.h> header file.  */
+#undef HAVE_SYSLOG_H
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the <utime.h> header file.  */
+#undef HAVE_UTIME_H
+
+/* Define if you have the crypt library (-lcrypt).  */
+#undef HAVE_LIBCRYPT
+
+/* Define if you have the nsl library (-lnsl).  */
+#undef HAVE_LIBNSL
+
+/* Define if you have the nys library (-lnys).  */
+#undef HAVE_LIBNYS
+
+/* Define if you have the rpc library (-lrpc).  */
+#undef HAVE_LIBRPC
+
+/* Define if you have the socket library (-lsocket).  */
+#undef HAVE_LIBSOCKET

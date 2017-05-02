@@ -1,0 +1,396 @@
+
+
+
+
+
+
+
+
+
+
+             The LINUX User-Space NFS Server(1)
+
+                        Version 2.2
+
+
+
+                      October 30, 1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+____________________
+
+1. This  is a rewrite of the original README file (which you
+   can now find in README.HISTORIC).
+
+
+
+
+
+
+
+                            - 1 -
+
+
+
+1.  Overview
+
+This package contains all necessary programs  to  make  your
+Linux  machine  act  as  an  NFS server, being an NFS daemon
+(rpc.nfsd), a mount daemon (rpc.mountd), optionally, the uid
+mapping  daemon  (rpc.ugidd), and the showmount utility.  It
+was originally developed by Mark Shand, and further enhanced
+by  Donald  Becker,  Rick Sladkey, Orest Zborowski, Fred van
+Kempen, and Olaf Kirch.
+
+Unlike other NFS daemons, the Linux nfsd  runs  entirely  in
+user  space.   This  makes  it  a  tad slower than other NFS
+implementations, and also introduces some  awkwardnesses  in
+the  semantics  (for  instance, moving a file to a different
+directory will render its file handle invalid).
+
+
+2.  Building and installing unfsd
+
+To compile and install the programs  in  this  package,  you
+first have to run the BUILD script. It will ask you a couple
+of questions about your preferred configuration. It tries to
+be  helpful  by  informing you about why it asking you which
+question, but a brief overview may be useful nevertheless:
+
+multiple servers: For a long time, unfsd was not able to run
+     multiple   servers   in  parallel  without  sacrificing
+     read/write access. This was implemented only  recently,
+     and it has not been very widely tested.
+
+inode numbering scheme: One  of the main features of nfsd is
+     that when you export  a  directory,  it  represent  the
+     entire  hierarchy  beneath that directory to the client
+     as if it were a single file system. To make this  work,
+     however,  it has to cram the device and inode number of
+     each file system object into 32 bits,  which  serve  as
+     the  inode  number  seen  by  the client. These must be
+     unique.  If  you  export  a  fairly  large  disk,   the
+     likelihood  of  two  different files producing the same
+     pseudo inode number increases, and may lead to  strange
+     effects (files turning into directories, etc).
+
+     If  you've  had problems with this in the past, try out
+     the new inode numbering scheme.
+
+uid/gid mapping: Occasionally, you will want  to  serve  NFS
+     clients whose assignment of uids and gids to user names
+     differs from that on  the  client.  The  unfsd  package
+     offers  you  several  mechanisms to dynamically map the
+     client's uid space to that  of  the  server,  and  vice
+     versa:
+
+     static mapping: In  the  exports  file, you can provide
+          the NFS daemon with  a  file  that  describes  how
+
+
+
+
+
+
+
+
+                            - 2 -
+
+
+
+          individual  or entire ranges of uids and gids on a
+          client machine correspond to those of the  server.
+
+     NIS mapping: The  NFS  daemon is also able to query the
+          NIS server of the NFS client for  the  appropriate
+          uids  and  gids, using the user or group names and
+          looking them up in the appropriate NIS  maps.  You
+          can  do this by specifying the client's NIS domain
+          in the exports file. In addition, you may have  to
+          edit  the  /etc/yp.conf  file  to  point  your NIS
+          library to the server  for  that  NIS  domain  (if
+          you're using NYS).
+
+     ugidd mapping: This  is the original mechanism by which
+          unfsd supported dynamic uid/gid mapping. For this,
+          you need to run the rpc.ugidd daemon on the client
+          machine, and instruct the server  in  the  exports
+          file to use it.
+
+          While  this  is  convenient,  it  also  presents a
+          security problem because rpc.ugidd can  be  abused
+          by  attackers to obtain a list of valid user names
+          for  the  client  machine.  This  can  be   helped
+          somewhat  by making ugidd check the requester's IP
+          address against  the  hosts.allow  and  hosts.deny
+          files  also  used by the tcpd wrapper program (see
+          below).
+
+     The BUILD script will ask you whether you want  dynamic
+     ugidd-  or NIS-based uid mapping. If you disable ugidd-
+     mapping, the daemon  will  not  be  compiled,  and  the
+     manpage will not be installed.
+
+file access control: For  security  reasons, mountd and nfsd
+     make sure that vital files  such  as  /etc/exports  are
+     owned  by  the  correct  user  and  have an appropriate
+     access mode. BUILD will ask you which  user  and  group
+     should   own   exports.    By  default,  this  will  be
+     root/root.
+
+daemon access control: Both rpc.mountd and rpc.ugidd can  be
+     configured  to  use  the access control features of the
+     TCP wrappers package. This will let you specify in  the
+     /etc/hosts.allow  and  hosts.deny files which hosts are
+     allowed to talk to the daemons at all.  Note  that  you
+     still  have  to  configure  access control as described
+     below.
+
+     If you do enable host access  checking  for  rpc.ugidd,
+     the  BUILD script will try to locate libwrap.a which is
+     needed  for  this.  This  library  is  part  of  Wietse
+     Venema's  TCP  wrapper  package. BUILD looks in several
+     standard locations such as /usr/lib.  If  it  does  not
+     find  the  library  (e.g.  because you keep it in weird
+
+
+
+
+
+
+
+
+                            - 3 -
+
+
+
+     places like /usr/i486-linux/lib), it will ask  you  for
+     its full path name.
+
+mount request logging: If you enable this option, rpc.mountd
+     will log all attempts to mount a directory via NFS from
+     your server machine. This is very helpful in monitoring
+     NFS server usage, and for catching attempts at attcking
+     your machine via NFS.
+
+     When  enabled,  mountd  will  log  all successful mount
+     attempts to syslog's daemon facility at  level  notice.
+     Failed mount attempts are logged at level warning.
+
+After completing these questions, BUILD will run a configure
+script to detect certain system capabilities. This will take
+a  while  on  your  first  attempt.  Repeated invocations of
+configure will run a lot faster because the results  of  the
+tests  are  cached.  If  you  want to start out with a fresh
+build on a different release of Linux, you should make  sure
+to   get  rid  of  these  cached  values  by  running  `make
+distclean' first.
+
+You can then compile  and  install  nfsd  by  typing  `make'
+and/or  (as root) `make install.' This will also install the
+manual pages.
+
+
+3.  Configuring nfsd
+
+To turn your Linux box into an NFS server, you have to start
+the  following programs from /etc/rc.d/rc.inet2 (or wherever
+your favorite  Linux  distribution  starts  network  daemons
+from):
+
+   * rpc.portmap
+
+   * rpc.mountd
+
+   * rpc.nfsd
+
+   * rpc.ugidd (optional)
+
+   * rpc.pcnfsd (optional, not contained in this package)
+
+To  make  directories  available to NFS clients, you have to
+enter them in your exports file along with the hosts allowed
+to  mount  them.   The list of options and a sample file are
+given in the exports(5) manual page (and the whole topic  is
+covered    quite    extensively   in   the   Linux   Network
+Administrator's Guide anyway), so I will  not  discuss  this
+here.  If  somebody  feels like filling in the missing parts
+here, please send me the diffs.
+
+
+
+
+
+
+
+
+
+
+                            - 4 -
+
+
+
+4.  Configuring network access control
+
+To protect rpc.ugidd or rpc.mountd from unauthorized access,
+you  just  have  to  add  lines  to  /etc/hosts.allow and/or
+/etc/hosts.deny detailing which hosts are allowed to talk to
+it. If your NFS server has the IP address 193.175.30.33, you
+would add  the  following  to  hosts.allow  and  hosts.deny,
+respectively:
+
+     # hosts.allow:
+     rpc.ugidd: 193.175.30.33
+     # hosts.deny:
+     rpc.ugidd: ALL
+
+If  you  have compiled the TCP wrappers package with OPTIONS
+support (which I highly recommend), you  can  also  put  the
+following into hosts.allow, which will have the same effect:
+
+     rpc.ugidd: ALL EXCEPT 193.175.30.33 : deny
+
+Similarly, you can limit access to  rpc.mountd  on  the  NFS
+server  host.  The daemon identifier to be used in this case
+is rpc.mountd.
+
+
+5.  Running several Daemons Concurrently
+
+For a long  time,  unfsd  has  not  supported  multiple  NFS
+processes   at   all.    This   is  paramount  to  good  NFS
+performance, however, as it allows other you to service  NFS
+requests  in  parallel.  Then,  for  a  while,  it supported
+multiple server processes in read-only mode (which was quite
+easy  as  there  is  no  need to synchronize the file handle
+caches between daemon processes in that case).
+
+Starting  with  release  2.2beta32,  unfsd   also   supports
+multiple server processes in read/write mode. Note that this
+code is still experimental, and may disappear again  if  the
+concept doesn't work, or is too slow.
+
+
+6.  Common Problems (a.k.a. Dependencies)
+
+   * Root  squashing is enabled by default, which means that
+     requests from the root user  are  treated  as  if  they
+     originated  from  the  nobody user. If you want root on
+     the NFS client to be able to  access  files  with  full
+     prvilege,  you have to add no_root_squash to the option
+     list in /etc/exports.
+
+   * The most specific entry  applies.  This  means  if  you
+     export  both  /usr  and /usr/local to a client, and the
+     client mounts /usr from the  server,  the  options  for
+     /usr/local will still apply when the client accesses
+
+
+
+
+
+
+
+
+                            - 5 -
+
+
+
+   * Wildcards  in client names only do not match dots. This
+     means that the entry *.foo.com only matches hosts named
+     joe.foo.com  etc,  but  not  joe.sales.foo.com. You may
+     call this a bug (and I may replace the current  pattern
+     matching  code with wildmat if there is enough demand).
+
+   * Changes to the exports file do not  take  effect  until
+     both  nfsd and mountd have re-read the file. You either
+     have to kill both daemons and  restart  them,  or  send
+     them a HUP signal:
+
+     # killall -HUP rpc.mountd rpc.nfsd
+
+   * NFS  operation  between  two  Linux  boxes can be quite
+     slow. There are a number of reasons for this, only  one
+     of  which  is  that  unfsd runs in user space.  Another
+     (and much worse) problem is that the Linux  NFS  client
+     code  currently  does no proper caching, read-ahead and
+     write-behind of NFS data.  This problem can  be  helped
+     by  increasing  the  RPC transfer size on the client by
+     adding the `rsize=8192,wsize=8192' mount options.  This
+     will  at  least  improve  throughput  when  reading  or
+     writing large files.  You  are  still  in  a  lose-lose
+     situation  when applications write data line by line or
+     with no output buffering at all.
+
+
+7.  Copyright
+
+Much of the code in this package was originally  written  by
+Mark Shand, and is placed under the following copyright:
+
+   This  software may be used for any purpose provided
+   the above  copyright  notice  is  retained.  It  is
+   supplied  as  is,  with  no warranties expressed or
+   implied.
+
+Other code, especially that written by Rick Sladkey and some
+replacement routines included from the GNU libc, are covered
+by the GNU General Public License, version 2,  or  (at  your
+option) any later version.
+
+
+8.  Bug Reports
+
+If  you  think  you have encountered a bug in nfsd or any of
+the other  programs  in  this  package,  please  follow  the
+instructions in the file BUGS.
+
+
+
+
+
+
+
+
+
+
+

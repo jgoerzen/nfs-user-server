@@ -1,0 +1,1023 @@
+Wed Nov 10 10:17:16 1999
+
+	* Security fix for buffer overflow in fh_buildpath
+	  No thanks to Mariusz who reported it to bugtraq
+	  rather than me.
+
+Wed Sep  8 09:07:38 1999
+
+	* If a host is listed by IP addr, do a reverse lookup
+	  just once when parsing the exports file.
+
+	* When an unknown addr is matched by the anonymous
+	  or default client, create an entry in the address
+	  hash table. Don't allow more than 1000 anon/default
+	  hash entries at one time (brutal garbage collection).
+
+	* Fix by Derek Mulcahy: auth_getclient_internal
+	  now flags 1.2.3.4/255.255.255.0 hosts as special
+	  so that a DNS lookup is skipped.
+
+	* More fixes for netmask exports. Thanks to
+	  Mikael Hakman <Mikael.Hakman@ibm.net> for
+	  testing them.
+
+Thu Jul 15 12:16:46 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Mount attempts from an unlisted client would
+	  crash mountd (NULL pointer deref).
+
+Fri Jun 11 12:11:10 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Scott Simpson <simpsons@intergame.com> reports
+	  that setfsuid(-2) fails on his machine.
+	  Lo and behold, it does so on my machine, too.
+	  That's because glibc switched to 32bit userland
+	  uid's and makes sure the upper 16bits are
+	  zero before calling the kernel's setfsuid() etc.
+
+Wed Jun  2 14:13:50 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Added --no-spoof-trace flag to mountd
+	  (parallels nfsd's use of this flag)
+	  as per suggestion from beurton@univ-ubs.fr (Luc.Beurton).
+	  Option documented in manpages.
+
+Wed May 26 10:07:02 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Broken SECURE_PORT macro in system.h.
+	  Bug report and fix from Kazutoshi Morioka
+	  <aab36830.pop07.odn.ne.jp>
+
+Mon May 17 15:19:17 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Newer glibc's actually define authdes_getucred...
+
+Mon Apr 19 14:01:31 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* The last few patches again broke exporting of the
+	  root directory :-(
+	  Thanks to Gavin Hurlbut <gjhurlbu@beirdo.ott.uplink.on.ca>.
+
+Thu Apr  8 14:43:38 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Patch from Peter Benie <pjb1008@cam.ac.uk> to
+	  make sure that if we require secure ports, we make
+	  sure requests don't come in from < IPPORT_RESERVED/2.
+
+Mon Jan 11 22:12:01 1999  Olaf Kirch <okir@monad.swb.de>
+
+	* Various fixes to the inode number generation
+	* For each export, now keep track what its origin
+	  is (e.g. a netmask export, or a wildcard one).
+	  We also keep a pointer to the parent export.
+	* In nfsd_readdir, hide the inode number for the ..
+	  entry if we're reading the top-most exported
+	  directory (avoids inode clashes when using the new
+	  inode # generation scheme).
+
+Wed Nov  4 23:39:15 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* The recently-introduced FHFIND_CHECK invoked from
+	  within auth_fh was consuming unacceptable amounts
+	  of CPU because the fsuid/fsgid weren't set
+	  to the aller's credentials. As a consequence,
+	  the lstat call would fail more often than not,
+	  causing calls to fh_buildpath.
+
+	  Reported and anaylzed by Wolfgang Moeller,
+	  <moeller@gwdvms.dnet.gwdg.de>. Many many thanks
+	  for this very helpful bug report.
+
+Fri Oct 30 17:42:17 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Experimental code for inode # generation.
+	  Should cure the inode aliasing problems people see
+	  on big disks.
+
+	* Added Pavel Machak's patch for exprimental file
+	  systems.
+
+Fri Oct 23 09:40:16 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* On machines where people didn't enable the resolver's
+	  nospoof option, exporting to just a single IP of
+	  a multi-homed host would create a client entry for
+	  a randomly chosen IP (well, of the ones that belong
+	  to the client, of course:-).
+	  Still not perfectly solved; listing a single IP
+	  will now export to _all_ IPs of a multi-homed host.
+	  Reported by <nick@gidora.zeta.org.au>.
+
+Mon Oct 19 17:32:07 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Listing /cdrom/	foo(ro)
+	  would export
+		/	world
+		/cdrom	foo
+	  Reported by <Harald.Hannelius@iki.fi>
+
+Wed Sep 30 12:39:22 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed yet another problem with mountd (DoS attack).
+	  Bug found and reported to bugtraq by Tiago Rodrigues
+	  <tiagor@solsuni.pt>.
+
+	* Added experimental code for TCP authentication via
+	  external daemon.
+
+	* Anonymous clients get a different set of default options.
+
+	* Fixed problem in fh_find with directories that are
+	  mount points (cached FHs would be discarded and rebuilt
+	  for every call).
+
+	* ANSIized a couple of functions.
+
+Mon Sep 14 14:32:37 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Added the --fail-safe option to mountd/nfsd.
+	  This option gives you automatic restarting of the
+	  servers after death by signal. This is a debugging
+	  feature.
+
+	* Replace all signal() calls with sigaction() unless
+	  the former implement BSD signal semantics (i.e. signal
+	  handlers are sticky, unlike on sysv).
+
+Thu Sep 10 15:54:13 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed two bugs in the authentication code.
+	  1. Numeric IPs weren't handled properly
+	  2. Exporting the root directory didn't work.
+
+	* Some clients send partial utimes updates only
+	  (mtime but no atime, etc).
+	  Fix from Alan Cox <alan.cox@redhat.com>
+
+	* aclocal.m4: Don't assume "." is in the path when
+	  running site.mk.
+	  Fix from SL Baur  <steve@altair.xemacs.org>
+
+	* nfsd.c: when receiving SIGHUP, the daemon
+	  was trying to re-read the exports file under whatever
+	  uid it happened to handle the most recent request.
+	  Bad idea if /etc/exports is not world-readable.
+	  Reported by Tero Pelander <tpeland@top.tkukoulu.fi>
+
+	* auth_init.c: when receiving SIGHUP, nfsd would loop
+	  forever in auth_init() if there were bad characters
+	  in an export entry's options field (e.g. a `-').
+	  Reported by Tero Pelander <tpeland@top.tkukoulu.fi>
+
+Fri Aug 28 17:30:53 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed a stupid bug in the handling of some mount
+	  requests...
+
+Fri Aug 28 10:18:46 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed buffer overrun (blush).
+
+Fri Jul 10 15:11:30 1998  Olaf Kirch <okir@monad.swb.de>
+
+	* As per pavel Machek's request, now does a chdir("/")
+	  at start-up.
+
+Mon Dec 22 09:44:10 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* Various fixes to make it compile on glibc2
+	  (Pascal Dupuis <dupuis@lei.ucl.ac.be>)
+	* Dprintf wouldn't print L_NOTICE messages
+	  (Dieter Stolte <d.Stolte@tu-bs.de>)
+
+Sun Dec 21 13:35:07 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* Backed out the getattr patch introduced in previous patch.
+	* Some experimental code for multiple servers in R/W mode.
+
+Mon Dec  8 17:15:28 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* mountd now supports hosts_access
+	* Fixed uid/gid mapping to work on glibc 2 (32bit uid_t/gid_t)
+	  Also added to new mapping facilities (static and NIS)
+	* Fixed a problem with the alarm timer never going off when
+	  running multiple servers (Bernd Anhaeupl)
+	* Fixed a problem with bad device numbers (always 1) in
+	  getattr() (Marty Leisner).
+	* Some NIS servers (e.g. Sun) return trailing white space
+	  in hosts.byaddr NIS maps. Libc doesn't remove them, so
+	  the code in auth.c has to.
+
+Wed Aug 27 12:42:35 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* rpc.mountd would let the client know whether a file was
+	  installed or not, even if the client was not authorized
+	  to mount it.
+
+Mon Aug 11 16:46:40 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* Added --log-transfers option.
+	* Streamlined the anon-only case to provide better performance
+	  for world exports (e.g. for off-the-server Linux installs).
+
+Fri Jul 11 16:00:00 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* Added some support for WebNFS. Still subject to testing.
+
+Sat Jun 28 19:01:17 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* If an exports line contains the anon client, make sure
+	  the volume is presented as world-exportable to showmount
+	  clients. Otherwise it causes problems for some automounter
+	  implementations (e.g. Sun's automount).  Bug report and fix
+	  by M. Manoj Kumar <manoj@sys.soft.net>.
+	* mount manpage now refers explicitly to both NFS and SMB
+	  when describing the --re-export option.
+
+Thu Jun 19 11:55:04 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* When the client called setattr() with wildcard mtime,
+	  we returned the old mtime. Reported by tstam@cse.cuhk.edu.hk.
+	* rmtab was created with the wrong permissions.
+
+Wed Feb  5 17:11:39 1997  Olaf Kirch <okir@monad.swb.de>
+
+	* Modified BUILD script so it can be called to set up
+	  site.h and site.mk non-interactively (do you call that
+	  intra-actively?)
+	  
+Tue Dec 31 16:57:57 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Directories within setgid directories didn't get
+	  created with the setgid bit set.
+
+Fri Nov 22 00:03:08 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed serious bug in create/lookup/mkdir etc which
+	  didn't check for slashes in the file name.
+	* The hosts_ctl call in ugidd.c was missing an argument.
+	  Thanks to Ken-ichi Yamasaki <yamasaki@phys.uec.ac.jp>
+
+Tue Nov 19 09:43:48 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed problem with Ultrix clients who would send a
+	  mode of 0xffff in some setattr calls.
+
+Fri Nov 15 11:50:28 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Added experimental CDF support. See README.CDF for details.
+
+Wed Sep 25 01:19:25 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed a very old bug in the file handle cache. When many
+	  files are accessed in quick succession, there may be a hash
+	  clash in the fh cache (ouch). This is normally detected,
+	  but the stale FH wouldn't be removed in all cases. Instead,
+	  nfsd would incorrectly flag an NFSERR_STALE error.
+
+Fri Sep 20 13:58:46 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Fixed stupid typo in getattr.c, where file size was always
+	  capped at 1024 in fattr returns.
+	* mountd can now run on fixed port number (for the benefit of
+	  firewalls).
+	  Patch courtesy to Patrick Weemeeuw <patrick@kulnet.kuleuven.ac.be>,
+	  with some minor changes by me (okir).
+	* Cleaned up some minor nuisance when running from inetd. 
+
+Sat Aug 17 17:55:21 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* When executing an mknod call, don't assume anything about
+	  the size or layout of the client's dev_t, and cast the
+	  size attribute to dev_t directly.
+	  If the cast loses bits, return NFSERR_INVAL.
+
+Fri Aug  2 11:19:58 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* getattr should return the exact size of a symlink, not
+	  NFS_MAXPATH.
+
+Sat Jul 27 03:35:57 1996  Olaf Kirch <okir@monad.swb.de>
+
+	* Backed out a bug introduced by the AXP patches
+	  (David Mosberger-Tang).
+	* Corrected an off-by-one error in mountd handling of different
+	  mount protocol versions (H.J. Lu).
+	* Improved netgroup processing; nfsd and mountd unregister from
+	  the portmapper after shutdown (Swen Thuemmler).
+
+Fri Jul  5 12:09:01 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Added support for MOUNT ver 2 to mountd. Solaris 2.5 seems
+	  to need it in some incarnations.
+
+Fri Jun 14 17:56:29 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Added patches by David Mosberger-Tang to be able
+	  to let unfsd run on Linux/AXP (and other 64bit machines?).
+
+Fri Mar  1 20:23:38 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* NULL pointer dereference in auth_init.c, get_client()
+	  when exporting /. (Steven L. Baur <steve@miranova.com>)
+
+Wed Feb 28 20:39:36 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* When started from inetd, force foreground mode
+
+Wed Feb 21 16:11:29 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* In nfsproc_symlink, if the arguments contained valid attributes,
+	  we would try to set the attrs of the symlink _destination_,
+	  which is clearly wrong and led to error messages.
+	  Thanks to <Klaus.Steinberger@physik.tu-muenchen.de>.
+
+Thu Feb 15 01:26:05 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Finally fixed the SIGHUP death syndrome. A dangling pointer
+	  was at fault, but the problem occured only when using
+	  anonymous exports.  Why do people do things like that?! :-)
+
+	  Many thanks to Jan Kasprzac <kas@foresta.cz> for mailing me
+	  a very instructive gdb trace.
+
+Tue Feb 13 11:31:00 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed a problem with showmount not displaying directories
+	  exported to everyone.
+	* Fixed problem with broken OS/2 clients that would try to do
+	  a lookup(dirname, "").
+	  Bug report & fix by Jon Seymour <jon@zeta.org.au>
+
+Wed Jan 31 19:59:36 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Added umask(0) to fh_init.
+	* Now do bounds checking on read requests. Reads of more than
+	  8K would crash the server... Yuck!
+	  Bumped max read/write size to 16K.
+
+Mon Jan 29 11:12:58 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* nfsd now recognizes the nfs/udp service port defined in
+	  /etc/services
+	* Calls from anonymous clients used to cause DNS lookups each
+	  time. Thought I had fixed that ages ago... :-(
+	* Reverted 'enhancement' that tried to open a file RDWR first.
+	  This was supposed to avoid repeated open/close for files that
+	  client A was writing to while client B is reading it. Unfortu-
+	  nately, the open/close took place nevertheless, and the code
+	  didn't check for ETXTBSY on binaries.
+
+	  Thanks to Mike Castle <mcastle@umr.edu> for his excellent
+	  bug report.
+
+Sat Jan  6 14:32:20 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Back-ported my knfsd-based rquotad to unfsd.  Still needs
+	  testing by someone actually using quotas.
+
+Sat Jan  6 02:26:56 1996  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed a `problem' with create handling of read-only files. In
+	  path_open, the owner would be allowed any type of access even
+	  when the file was inaccessible due to bad permissions (e.g.
+	  writing to a mode 400 file). This introduces a different, much
+	  more unintuitive feature, namely that a creat() call would
+	  truncate an existing file, even when mode 400! There's no
+	  One True Belief in this case, but I've modified the code to
+	  allow this type of access only for read/write operations,
+	  because a semi-succeeding creat operation is much more confusing
+	  than a failing truncate.
+
+	  Again, many thanks to Michael Vishchers vishchers@nev.psi.de]
+
+Tue Dec 26 18:35:05 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Released as 2.2beta6.
+
+Fri Dec 22 18:35:44 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* In path_open, try to open the file RDWR first, and if that fails
+	  with EPERM, use the mode provided by the caller.
+	* In nfsd_proc_create, open files with O_WRONLY rather than O_RDWR.
+	  This made Sun clients barf when doing `echo > xxx' where x was
+	  a write-only file.
+	* In nfsd_proc_create, ignore the size attribute in the setattr
+	  invocation when the file was newly created. It's not needed, and
+	  it triggers a very stupid (IMHO) bug in some NFS clients (see
+	  comment in the code).
+	  [All bugs reported by Michael Vishchers vishchers@nev.psi.de]
+
+Mon Dec 11 20:17:00 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Ignore client-side enforcement of BSD setgid directories, i.e.
+	  ignore gid attribute on creat, mkdir and symlink. The chown
+	  call will fail anyway if the user is not in the directory's
+	  group; and if the file system was mounted with the BSD option,
+	  the kernel will do that for us.
+
+	* truncate() would ignore values greater than the current file
+	  size.
+
+	  [Reported by Alec.Muffet@UK.Sun.COM]
+
+Sat Nov 11 23:15:05 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed a couple of minor glitches reported by Walter Misar
+	  <misar@rbg.informatik.th-darmstadt.de>.
+	  (Spelling mistake in exports.5 and possible buffer overwrite
+	  when reading the exports file).
+
+	* rpcmisc.c: Attempt at fixing an obscure problem with mountd
+	  and nfsd occasionally dying after receiving a SIGHUP. It
+	  appears this is caused by a SIGPIPE being sent to the daemon
+	  when trying to write to a dead socket (but why do sockets die
+	  at all?). The daemons now ignore SIGPIPE, hoping that the RPC
+	  library code will cope gracefully with the failed write.
+
+Sat Oct 14 00:25:42 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed problem with file systems exported with all_squash
+	  on. Files created by some user were unaccessible to him/her
+	  afterwards because the client would perform its own permission
+	  checking and find that the user's uid was != nobody_uid.
+	  Bug report and initial patch thanks to Robert Vogelgesang
+	  <vogelges@rhrk.uni-kl.de>.
+	  Note that the modification constitutes a grave hack; and
+	  is therefore disabled by default. Compile with DOSHACKS
+	  defined to get it.
+
+Fri Sep 29 17:34:17 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Added noaccess option in exports file.
+
+Wed Sep 13 03:05:16 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed the stale fh bug, thanks to Petri Kutvonen.
+	  The problem was that fh_buildpath would fail to
+	  reconstruct the file name from the hashed path in the
+	  fh if the user didn't have write permission. Setting
+	  the uid to root during path lookup cures this, and
+	  also allows us to get rid of a lot of special-case
+	  handling for xonly-directories.
+	* Added new host format in /etc/exports that permits
+	  exports to an entire subnet using addr/mask in dotted
+	  quad notation.
+
+Thu Aug 31 20:29:57 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Increased number of simultaneously open FHs from 8 to
+	  3/4*FOPEN_MAX and added LRU list for open files.
+
+Tue Aug 29 23:26:23 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* when a new file couldn't be created because of missing
+	  permissions, nfsd-2.2 would return ENOENT instead of EACCES.
+	  A `oerrno = oerrno' statement in fh.c was at fault.
+
+Sat Aug 19 17:26:16 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* umask didn't work on mkdir() because it used only the
+	  uid/gid provided in the attributes argument. Changed to
+	  use mode and utimes arguments as well.
+	* symlink ignored the attributes altogether. RFC 1094 says
+	  that ``on UNIX servers, the attributes are never used, since
+	  symlinks always have mode 0777.'' Evaluating utimes and
+	  possibly the owner attributes may still be useful, IMHO, so I
+	  added this.
+
+Fri Aug 18 13:11:16 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* A lookup("/", "..") would cause memory corruption.
+	  Rarely happens, only with diskless clients and DOS boxes...
+	* Fixed a number of BUILD and Makefile problems reported by
+	  Holger Grothe.
+	* The fh cache is now always flushed from the top RPC dispatch
+	  loop to avoid cache corruption. Why is it that bug reports
+	  always come in waves?
+	* Updated configure.in and aclocal.m4 for Autoconf 2.3
+
+Fri Aug 18 18:11:38 1995  Alexander O. Yuriev (alex@bach.cis.temple.edu)
+
+	* Added ability to log mount requests
+	* Modified BUILD
+
+Wed Aug 16 23:31:36 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed a bug in the create call for readonly-FSs. Thanks
+	  to Miquel van Smoorenburg for reporting this.
+	* Fixed problem with build script.
+	* Added additional code to trace fh's. Hunting for a problem
+	  with stale fh's...
+	* NFS calls that accept an sattr argument didn't map the uid/gid.
+	  Changed all calls to use the new setattr() function.
+	* Released as 2.2beta4.
+
+Wed Aug  9 21:10:15 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed bug in the link routine that would break hardlinks
+	  totally. Reported by edi@edefix.han.de.
+
+Thu Jun 29 19:50:36 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Changed order of while() test in nfsd_proc_readdir so that
+	  we read the next directory entry even if it wouldn't fit
+	  anymore. This way, we avoid nfs_readdir returning empty
+	  dirlists in some cases.
+
+Wed Jun 28 14:31:51 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Deny hard links between different export volumes.
+	  (Could be a security problem if they have different
+	  uid mapping strategies).
+
+Sun Jun 25 19:38:29 1995  Alexander O. Yuriev (alex@bach.cis.temple.edu)
+
+	* Added interactive BUILD script. This script now takes care
+	  of ugidd configuration.
+	* If nfsd is compiled without uid mapping support, rpc.ugidd is
+	  replaced with a dummy program.
+	* exports file access control added to auth_init.c
+
+Sat Jun 24 15:11:06 1995  Miquel van Smoorenburg (miquels@drinkel.ow.org)
+
+	* Added support for FIFOs and UNIX sockets in nfsproc_create_2.
+	  UNIX socket creation is currently supported only on Linux.
+
+Fri Jun 23 14:16:16 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Added a call to auth_fh at the top of nfsproc_lookup.
+	  Without this call, the directory file handle would sometimes
+	  be checked with the wrong uid/gid.
+
+Tue Jun 13 18:23:01 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Enabled Multiple-Server hack. This option implies global
+	  read-only export. See nfsd.8 manpage.
+
+Sat May 27 00:34:06 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Added selective squashing (squash_uids=...) and
+	  client-specific nobody uid (anonuid=..) support.
+	  Rewrote exports.5 manpage.
+
+	* uid mapping is now compiled in unconditionally.
+
+Thu May 25 13:58:55 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Added MNT_DUMP patches by Dariush Shirazi
+	  <dshirazi@uhl.uiowa.edu>.
+
+	* Added SIGHUP handlers to mountd and nfsd for re-reading
+	  the exports file and flushing the fh cache.
+
+	* Added files mountd.h and mount_dispatch.c. The latter replaces
+	  mount_svc.c.
+
+	* Support for multi-homed clients.
+
+Fri May 19 21:36:53 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* (dispatch.c): log_call is now only called when debugging has
+	  really been enabled. Otherwise the pr_* functions get called
+	  regardless of debug state. This saves about 30-50% of execution
+	  time per call.
+
+	* Moved generic RPC startup code (as generated by rpcgen from
+	  Rick's rpc-0.9) into rpcmisc.c. These routines are now used
+	  by both nfsd and mountd.
+
+	* Added hosts_access control to ugidd.
+
+	* ugidd would crash if someone asked for a nonexistent user
+	  or group name. uid_name and gid_group would return NULL
+	  in this case, which makes xdr_string segfault.
+
+	* mountd would re-export NFS-mounted file systems regardless
+	  or whether it had been started with --re-export or not. Fixed.
+
+	* creat calls on existing special files should now work even on
+	  read-only FSs. Again, this is for the sake of Sun's
+	  echo >/dev/null.
+
+Thu May 18 00:19:50 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Added per-call profiling. See the description of -DCALL_PROFILE
+	  in the Makefile.
+
+	* Added netgroup support to /etc/exports parsing.
+
+Sat Apr 29 00:58:42 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* The file handle flushing code is now executed more frequently.
+	  File descriptors are closed after about 2 minutes of inactivity
+	  so that files deleted behind our back actually go away.  Thanks
+	  to David Coons <davec@fa.disney.com> for his very helpful bug
+	  report.
+
+Thu Apr 27 01:50:27 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Fixed a bug with fd reuse in fh_fd. A previously opened
+	  file was not checked for access restrictions when another
+	  user tried to read it. 
+
+	* Redid much of the uid mapping code in ugid_map.c. Hopefully
+	  a lot cleaner and robust now. This code is still experimental,
+	  though.
+
+Wed Apr 26 01:46:11 1995  Ricky Beam (cramer@catt.ncsu.edu)
+
+	* Incorporated Mark Shand's ugid mapping code to handle nfs calls
+	  for unmatched filesystems -- a common thing I see under linux.
+
+	* The actual source of the ugid code is unknown -- I've had it for
+	  several years as the end result of a week long archie.
+
+Tue Apr 11 00:45:10 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* Clients may now again appear as both wildcards and exact
+	  names. In early 2.2 versions, foo.bar.edu would not get the
+	  mount points for *.bar.edu.
+
+	* Wildcards are matched from most specific to least specific. 
+	  This allows to have both *.pal.xgw.fi and *.xgw.fi in your
+	  /etc/exports.
+
+Thu Mar 30 23:01:57 1995  Olaf Kirch (okir@monad.swb.de)
+
+	* auth.c: redone entire client authentication.
+
+	* auth.c: client lookup now uses hash table indexed by client
+	  IP address.
+
+	* nfsd.c: authenticate fh's on every request. Removed check_ro
+	  and added general auth_fh function.
+
+	* implemented root_squash.
+
+	* added setfsuid/setfsgid. If it's not in the library, a static
+	  inline asm function is kludged for Linux ix86.
+
+	* nfsd.c (nfsproc_create_2): "echo > /dev/null" still wouldn't 
+	  work from Suns (it would create a regular file instead). We now
+	  set the request's attr.size field to major/minor number of the
+	  device if we see this sort of thing.
+
+	* auth_init.c: moved check for nobody's uid and gid to auth_init
+	  so this check is performed at run time. Removed AC_NOBODY
+	  checks from configure.in and friends.
+
+Mon Dec 27 22:37:12 1993  Rick Sladkey  (jrs@lepton)
+
+	* released as Universal NFS Server 2.0
+
+	* dispatch.c (nfs_dispatch): omit comparision of unsigned >= 0.
+
+	* fh.c (fh_find): quiet gcc 2.5 format warning.
+
+	* nfsd.h (realpath prototype): only if not HAVE_REALPATH defined.
+
+Sun Nov 21 09:48:07 1993  Rick Sladkey  (jrs@lepton)
+
+	* system.h (setreuid, setregid): change to seteuid and setegid.
+
+	* configure.in (AC_HAVE_FUNCS): check for seteuid.
+
+	* dispatch.c (set_ids), fh.c (path_open): change
+	setreuid and setregid to seteuid and setegid forms.
+
+Thu Nov  4 22:20:51 1993  Rick Sladkey  (jrs@lepton)
+
+	* auth_clnt.c (auth_clnt): fix a NULL dereference bug
+	found due to the new qmagic binary format, nice.
+
+	* fh.c (fh_find), getattr.c (getattr), logging.c (dprintf):
+	replace blind usage of a raw string as the format string
+	to a printf-like function.  Now filenames with a % in them work.
+
+	* nfsd.c (nfsd_nfsproc_create_2): it seems incredible
+	but the latest patch still didn't allow SunOS to say
+	echo >/dev/null on a read-only filesystem.  One more try.
+
+Sat Oct 30 22:51:13 1993  Rick Sladkey  (jrs@lepton)
+
+	* nfsd.c (main): use setsid in preference to TIOCNOCTTY.
+
+Thu Oct 28 21:02:39 1993  Rick Sladkey  (jrs@lepton)
+
+	* nfsd.c (nfsd_nfsproc_create_2): allow buggy SunOS
+	clients to `create' existing char and block devices on
+	read-only filesystems.
+
+Wed Oct 27 21:03:24 1993  Rick Sladkey  (jrs@lepton)
+
+	* logging.c (toggle_logging): bug in interrupt
+	handler on systems where signals need to be re-armed.
+
+	* nfsd.c (nfsd_nfsproc_setattr_2): bug reported
+	by Ross Becker where files were not being truncated
+	properly.
+
+Wed Oct 13 20:08:45 1993  Rick Sladkey  (jrs@lepton)
+
+	* nfsmounted.c: new file.
+
+	* mountd.8, nfsd.8: general overhaul of the manual pages.
+
+	* mountd.c, nfsd.c, auth_init.c: new option `--re-export'.
+
+	* aclocal.m4, configure.in: minor changes for autoconf 1.6.
+
+	* dispatch.c (set_ids): failsafe check on size of cred_len
+	suggested by Glenn Moloney.
+
+Tue Oct 12 00:36:17 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile.in (config.status target rule): build config.status
+	using old config.status with --recheck, not configure with
+	--no-create.
+
+Fri Oct  8 01:12:25 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile.in: new library target libns.a.
+
+	* xmalloc.c, xstrdup.c, strdup.c, strstr.c: new
+	files from fileutils 3.6.
+
+Thu Oct  7 00:07:05 1993  Rick Sladkey  (jrs@lepton)
+
+	* aclocal.h: new macro AC_MOUNTLIST based on the
+	configure.in from fileutils 3.6.
+
+	* mountlist.c, mountlist.h: new files from fileutils 3.6.
+
+Wed Oct  6 01:20:14 1993  Rick Sladkey  (jrs@lepton)
+
+	* aclocal.m4, acconfig.h, configure.in: new autoconf
+	macro to detect uid and gid for nobody and nogroup.
+
+Tue Oct  5 00:04:48 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile.in: new rules for configure and config.h.in.
+
+	* aclocal.m4: new file of macros from configure.in.
+
+	* dispatch.c: change -2 uid/gid for nobody to 65534.
+
+	* system.h: try to extract or define PATH_MAX and NAME_MAX.
+	
+	* dispatch.c (xsetgroups):  it turns out that the type of
+	the aup_gids field of authunix_parms structure is the same
+	as the gids argument to setgroups on all systems I could
+	test.  Therefore xsetgroups was not correct and may not
+	be necessary.
+
+	* system.h: new file for system dependencies.
+
+	* nfsd.h: handle broken stat macros.
+
+	* acconfig.h: new file.
+
+	* config.h.in: new file created by autoheader.
+
+Mon Oct  4 19:30:31 1993  Rick Sladkey  (jrs@lepton)
+
+	* nfsd.c (serveral functions): replace chown with lchown.
+
+	* dispatch.c (xsetgroups): new function to acount for
+	BSD systems where arg to setgroups is not a gid_t pointer.
+
+	* nfsd.c (nfsd_nfsproc_create_2): handle situation where
+	the client's major and minor don't agree with the server's.
+
+	* dispatch.c (nfs_dispatch): add support for supplementary
+	groups based on Stephen Harris's patch.
+
+	* eaccess.c: new file from fileutils 3.6.  Might use this
+	to avoid ever changing user or group IDs.
+
+	* utimes.c (utimes): allow for missing NULL utime argument.
+
+	* nfsd.c (nfsd_nfsproc_create_2): account for a sunos41
+	bug where created regular files have a missing S_IFMT value.
+
+Sun Oct  3 22:12:05 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile.in (mount_svc.c rule): account for solaris2
+	braindamage wrt _rpcfdtype.
+
+	* configure.in, Makefile.in: account for possible alloca.c.
+
+	* alloca.c: new file, getopt.c may need it, arghh.
+
+	* fh.c, auth_init.c, auth_clnt.c, nfsd.c: rename
+	variables called "name" to "fname" or "hname" because
+	"name" is an rpcgen typdef in mount.h and some compilers
+	croak on variables with the same name as a type.
+
+	* dispatch.c (table_ent macro): added support for
+	pre-ANSI token concatenation and stringification.
+
+	* many files: changed function definitions with ANSI
+	prototypes to K&R style declarations.
+
+Sat Oct  2 11:56:12 1993  Rick Sladkey  (jrs@lepton)
+
+	* utimes.c: new file for systems without utimes(2).
+
+	* nfsd.h: defines for setreuid, setregid and getdtablesize.
+
+	* configure.in: check for setreuid, utimes, and
+	getdtablesize functions.
+
+	* nfsd.c (check_ro_attrib): fixed bug in Eric's ro checking.
+	The argument rqstp was being ignored in favor of the global
+	variable svc_rqstp.
+
+	* fh.c (fh_compose): change Job's new .. checking to use
+	auth_clnt instead of using the mountfh list.
+
+	* auth_init.c (auth_init): undo Job's new .. checking setup.
+	It doesn't work when an export point is a leading substring
+	of another mount point.
+
+	* nfs.d (nfsd_nfsproc_readlink_2): fixed bug in Eric's
+	new ro permission checking.  The code was checking what
+	the link pointed to, not the link itself.
+
+	* many files: Replaced bzero, bcmp, bcopy, index and rindex
+	with their ANSI counterparts.
+
+	* nfsd.h (string functions): use or define the string
+	functions memcmp, memset, memcpy, strchr and strrchr.
+
+	* Makefile.in (dependencies for C GENFILES): when using VPATH,
+	rpcgen gets the include path wrong for the header file.
+	Use sed to fix it.
+
+Thu Sep 23 13:30:00 1993  Eric Kasten (tigger@tigger.cl.msu.edu)
+
+	* Added code to allow for proper mounting of a mixture of
+        ro and rw file systems.  Most changes are in nfsd.c, including
+        the coding of the function check_ro_attrib(), and the 
+	inclusion of the calls to this function in the following 
+	functions:
+
+		nfsd_nfsproc_setattr_2()
+		nfsd_nfsproc_create_2()
+		nfsd_nfsproc_remove_2()
+		nfsd_nfsproc_rename_2()
+		nfsd_nfsproc_link_2()
+		nfsd_nfsproc_symlink_2()
+		nfsd_nfsproc_mkdir_2()
+		nfsd_nfsproc_rmdir_2()
+
+
+Sat Oct  2 01:32:55 1993  Rick Sladkey  (jrs@lepton)
+
+	* many files: add patch from Job de Haas to prohibit .. on mountpoints.
+
+Fri Oct  1 01:28:46 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile.in (mount_svc rule): ensure _rpcpmstart isn't static.
+
+	* mountd.c: make _rpcpmstart and forking depend on HAVE_RPCGEN_I.
+
+	* mountd.c: make _svc suffix depend on HAVE_RPCGEN_C.
+
+	* configure.in, Makefile.in: detect rpcgen, rpcgen -C, and rpcgen -I.
+
+	* Makefile.in: add dependencies for headers.
+
+	* mountd.c (main): use setsid if TIOCNOTTY isn't defined.
+
+	* nfsd.c (main): use setsid if TIOCNOTTY isn't defined.
+
+	* mkinstalldirs: new version.
+
+	* showmount.c (main, usage): added long options.
+
+	* nfsd.c (main, usage): added long options.
+
+	* mountd.c (main, usage): added long options.
+
+	* getopt.c, getopt1.c, getopt.h: new files.
+
+	* fh.c (path_open): fixed a stupid bug where new files couldn't be
+	created.
+
+Tue Sep 21 20:08:02 1993  Rick Sladkey  (jrs@lepton)
+
+	* nfsd.c (nfsd_nfsproc_create_2): rework Mark Eichin's special
+	file patch so that mknod from the client now works.
+
+	* fh.c (path_open): ensure EISDIR is returned for all special files.
+
+	* many files: pervasive changes for autoconf dependencies.
+
+	* strerror.c, mkdir.c, rename.c: new files based on tar-1.11.2.
+
+	* fsusage.c, fsusage.h: new files from fileutils-3.6.
+
+	* Makefile.in, configure.in, mkinstalldirs, COPYING, INSTALL:
+	new files based on autoconf and GNU standards.
+
+Thu Aug  5 19:51:50 1993  Rick Sladkey  (jrs@lepton)
+
+	* showmount.c (main): use gethostname as default instead of localhost.
+
+	* showmount.c (main): zero out RPC data structures before use.
+
+	* showmount.c (main): calculate exact column width for exports display.
+
+	* showmount.c (main): fix "(everybody)" netgroup display problem.
+
+	* nfsd.h (declarations): add prototype for realpath.
+
+	* auth_init.c (auth_init): use realpath to excise symlinks here too.
+
+	* mountd.c (mountproc_mnt_1): don't force leading slash on filenames.
+
+	* mountd.c (mountproc_mnt_1): permit files as well as directories
+	to be mounted by clients.
+
+	* mountd.c (mountproc_mnt_1): use `realpath()' as a replacement for
+	the incomplete symlink expansion.
+
+	* realpath.c: new file.
+
+	* fh.c (path_open): emulate Sun NFS server's EISDIR response
+	to reads or writes on character or block special files.
+
+	* fh.c (path_open): added support for clients being able to read
+	execute-only files.
+
+	* fh.c (nfs_errtbl): added support for EINVAL that Sun forgot.
+
+Sat Apr 24 01:10:29 1993  Rick Sladkey  (jrs@lepton)
+
+	* auth_clnt.c (auth_clnt): restored the "move to front" feature of
+	auth_clnt while maintaining FNvK fix below.
+
+Sun Apr  5 02:21:00 1993  Fred N. van Kempen  (waltje@uwalt.nl.mugnet.org)
+
+	* auth_clnt.c (auth_clnt): Fixed the "looping" bug.
+
+Sat Apr 10 21:56:10 1993  Rick Sladkey  (jrs@lepton)
+
+	* packaged and released as nfs-server-1.5.
+
+	* mountd.c (mountproc_mnt_1): resolve all symlinks in the pathname
+	of a mount request.
+	Bug reported by Peter McDonald <pmacdona@sanjuan.UVic.CA>.
+
+	* fh.c (path_open): extended stateless server fix to allow reading
+	a unreadable file if owned by requesting uid.
+
+Sun Feb 14 00:00:00 1993  Fred N. van Kempen  (waltje@uwalt.nl.mugnet.org)
+
+	* total re-organization of the source distribution.
+
+	* added SYSLOG support.  Removed logfile support.
+
+	* fixed /etc/exports reading bug.
+
+Thu Feb  4 00:40:42 1993  Rick Sladkey  (jrs@lepton)
+
+	* many files: added in obz@raster.Kodak.COM (Orest Zborowski)
+	changes to support multiple file descriptor caching and debug
+	changes.
+
+	* fh.c (fh_fd): added stateless server capability to write to
+	read-only file if owned by requesting uid.
+
+Fri Jan 29 01:39:25 1993  Rick Sladkey  (jrs@lepton)
+
+	* packaged and released as nfs-server-1.2.
+
+Sun Jan 24 02:07:21 1993  Rick Sladkey  (jrs@lepton)
+
+	* added anonymous mounts, lots of reorganizations.
+
+Sat Jan 23 21:09:39 1993  Rick Sladkey  (jrs@lepton)
+
+	* added showmount -e support to mountd.
+
+	* added authentication and pathname validation to mountd.
+
+	* added support for hostname patterns in exports file.
+
+	* renamed lots of files to more generic names.
+
+Sat Jan 16 13:17:08 1993  Rick Sladkey  (jrs@lepton)
+
+	* main.c (main): added support for tcp version of nfsd as well as
+	the ability to start nfsd from inetd.
+
+	* dispatch.c: changed NOBODY and NOGROUP defines to -2.
+
+Mon Jan 11 23:57:59 1993  Rick Sladkey  (jrs@lepton)
+
+	* Makefile: added support for tcp version of mountd.
+
