@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # 
 #  Universal NFS Server 2.2 configuration file
 #  Aug 18, 1995
