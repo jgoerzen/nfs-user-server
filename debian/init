@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:		nfs-user-server nfs-server
-# Required-Start:	$network portmap
-# Required-Stop:	$network portmap
+# Required-Start:	$network rpcbind
+# Required-Stop:	$network rpcbind
 # Default-Start:	2 3 4 5
 # Default-Stop:		0 1 6
 # Short-Description:	Startup script for the NFS servers.
