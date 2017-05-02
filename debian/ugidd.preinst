@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 # $Id: ugidd.preinst,v 1.2 1999/11/22 22:47:28 herbert Exp $
 
 # Before ugidd was split from nfs-server, it lived in /usr/sbin.
