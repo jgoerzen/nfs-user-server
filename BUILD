@@ -317,6 +317,7 @@ by very useful in all cases).
 EOF
 
 LOG_MOUNTS=`read_yesno "Do you want to log all mount reqests into syslog? (recommended) " y $log_mounts`
+LOG_MOUNTS="Y"
 if [ "$LOG_MOUNTS" = "Y" ]; then
   echo "  Good, I'd log all mount requests and their status into syslog"
 else
